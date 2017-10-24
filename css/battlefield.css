@@ -1,0 +1,237 @@
+body {
+    margin: 0;
+}
+* {
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.left-field {
+    float: left;
+}
+.right-field {
+    float: right;
+}
+
+#wrapper-field, #waterground-field, #middleground-field{
+    position: relative;
+    width: 100vw;
+    height: 50vh;
+
+}
+
+.john-cena {
+    position: absolute;
+    width: 235px;
+    height: 320px; 
+    bottom: -15px;
+    background-size: contain;
+    cursor: help;
+    
+}
+
+.light-mins, .dark-mins{
+    position: absolute;
+    width: 125px;
+    height: 125px;
+    bottom: -15px;
+    background-size: contain;
+    cursor: help;
+}
+
+/* 
+
+Left side of the field
+
+*/ 
+#champ1 {
+    
+    background-image: url("../assets/images/light/characters/Light_Commander.svg");
+    left: 0px;
+    
+} 
+ #min1-a{
+    left: 200px;
+    background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
+    width: 270px;
+}#min1-b{
+    left: 230px;
+    background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
+    width: 270px;
+}#min1-c{
+    left: 270px;
+    background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
+    width: 270px;
+} 
+/* Right side */
+#champ2 {  
+    right: 2px;
+    background-image: url("../assets/images/dark/characters/maskedmonster.svg")
+}
+#min2-a{
+    right: 150px;
+    background-image: url("../assets/images/dark/characters/maskedwitch.svg");
+    
+}#min2-b{
+    right: 225px;
+    background-image: url("../assets/images/dark/characters/skyrzz.svg");
+}#min2-c{
+    right: 350px;
+    background-image: url("../assets/images/dark/characters/maskdog.svg");
+}
+
+/* BOTTOM HALF OF THE SCREEN */ 
+
+#wrapper-cards {
+    width: 100vw;
+    height: 50vh;
+    background-image: url("../assets/images/backgrounds/master_hud.png");
+    
+    
+    /* display: flex; */
+}
+.cards {
+    position: relative;
+    z-index: 10;
+    top: 90px;
+    width: 200px;
+    height: 285px;
+    float: right;
+    display: inline-block;
+    margin: auto;
+    right: 25px;
+}
+
+.cards:hover {
+    animation: hoverTEST .75s infinite ease-in-out;
+    font-size: 2em;
+    z-index: 1000;
+}  
+
+/* USE OBJECTS FOR CARD BACK */ 
+
+#card1 {
+    background-image: url("../assets/images/dark/attackPlus10.png");
+}
+
+#card2 {
+    background-image: url("../assets/images/light/attackPlus10.png");
+}
+#card3 {
+    background-image: url("../assets/images/light/attackPlus10.png");
+}
+/* ^^^^^ JUST TEMPORARY FOR THE MIDTERM/SHOWCASING PURPOSES */
+
+.small-cards{
+    position: relative;
+    top: 20px;
+    float: right;
+    background-image: url("../assets/images/cardback.png");
+}
+
+#discard-pile {
+    margin: 0;
+    width: 100px;
+    height: 142.5px;
+    display: inline-block;
+}
+#deck-pile {
+    margin: auto;
+    width: 100px;
+    height: 142.5px;
+    display: inline-block;
+}
+
+.pile-cards {
+    position: relative;
+    top: 125px;
+    right: 50px;
+    float: right;
+    transform: rotate(270deg);
+    
+}
+.menu {
+    width: 50px;
+    height: 65px;
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(124,124,124,1);
+    top: 0;
+    left: 0;
+}
+.menu p {
+    display: none;
+}
+
+.dropArea {
+    width: 15vw;
+    height: 35vh;
+    position: absolute;
+    left: 225px;
+    bottom: 50px;
+    background-color: rgba(124,124,124,0.5);
+    border: 2px black solid;
+    z-index: 1;
+}
+
+/* Background stuff */
+
+/* real-far background */
+/*
+
+#wrapper-field {
+    
+} */
+
+#water-field {
+    background-image: url("../assets/images/backgrounds/master_layer4.png");
+    z-index: -100;
+}
+/* the one they stand on*/
+
+/* #foreground-field {
+    background-image:url("../assets/images/backgrounds/master_layer1.png");
+    z-index: 100;
+    border-bottom: 35px;
+} */
+
+#middleground-field {
+    background-image:url("../assets/images/backgrounds/master_layer2.png");
+    z-index: 10;
+    
+}
+#waterground-field {
+    background-image: url("../assets/images/backgrounds/master_layer3.png");
+    z-index: -10;
+}
+@keyframes hoverTEST {
+    0% {
+        /* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);*/
+		transform: translatey(0px);
+	}
+	50% {
+        /* box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2)*/;
+		transform: translatey(-20px);
+	}
+	100% {
+        /* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);*/
+		transform: translatey(0px);
+	}
+}
+
+
+#hoverPanel {
+    width: 200px;
+    height: 100px;
+    background-color: rgba(50, 50, 50, 0.75);
+    display: none;
+    z-index: 1000;
+    position: fixed;
+    text-align: center;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
