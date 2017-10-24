@@ -141,7 +141,23 @@ var gameCards = [{
     Health: 0
 }];
 
+function changeDiv(id){
+    var name = gameobj.drkSide[id].name;
+    var atk = gameobj.drkSide[id].atk;
+    var health = gameobj.drkSide[id].health;
+
+    //innerHTML stuff
+}
+
+var cards = document.getElementsByClassName("mon");
+
+for(var i =0;i<cards.length; i++){
+    cards[i].addEventListener("click", function(){
+        changeDiv(this.id);
+    })
+}
 champ1.addEventListener("click", function () {
+   
     hoverPanel.style.display = "block";
     console.log(lightCommander);
     cName.innerHTML = lightCommander.name
@@ -184,7 +200,7 @@ champ2.addEventListener("click", function () {
     cAtk.innerHTML = "ATK: " + darkCommander.atk;
 });
 
-// Dark Dog Click Function
+// Dark Wizard Click Function
 darkMinA.addEventListener("click", function () {
     hoverPanel.style.display = "block";
     console.log(darkMinA);
@@ -203,17 +219,17 @@ darkMinB.addEventListener("click", function () {
     console.log(darkMinB);
     cName.innerHTML = darkGrunt.name;
     cHp.innerHTML = "Health: " + darkGrunt.Health;
-    cAtk.innerHTML = "ATK: " + darkGrunt.Health;
+    cAtk.innerHTML = "ATK: " + darkGrunt.atk;
 });
 
-// Dark Wizard Click Function  
+// Dark Dog Click Function  
 darkMinC.addEventListener("click", function () {
     hoverPanel.style.display = "block";
     console.log(darkMinC);
     cName.innerHTML = darkDog.name;
     cHp.innerHTML = "Health: " + darkDog.Health;
-    cAtk.innerHTML = "ATK: " + darkDog.Health;
-    console.log("Get clickd bitch!!!");
+    cAtk.innerHTML = "ATK: " + darkDog.atk;
+    console.log("Get clicked!!!");
 });
 
 /*
@@ -241,9 +257,87 @@ function hpCalc() {
     this.gameCards.Health + darkMin[i].atk;
 }
 
+/*
+var lightCommander = {
+    name: "Light Commander",
+    Health: 32,
+    atk: 18,
+};
+
+var lightArcher = {
+    name: "Light Archer",
+    Health: 17,
+    atk: 8
+};
+
+var lightSoldier = {
+    name: "Light Soldier",
+    Health: 17,
+    atk: 8
+};
+
+var lightDog = {
+    name: "Light Dawg",
+    Health: 15,
+    atk: 10000000 // Richard what the fuck? XD
+}*/
 
 
 // jQuery tears
+var gameobj = {
+    lghtSide: {
+        "champ1": {
+            name: "Light Commander",
+            health: 32,
+            atk: 18
+        },
+        "min1-a": {
+            name: "Light Dog",
+            health: 15,
+            atk: 10
+        },
+        "min1-b": {
+            name: "Light Soldier",
+            health: 17,
+            atk: 8
+        },
+        "min1-c": {
+            name: "Light Archer",
+            health: 15,
+            atk: 10
+        }
+    },
+    drkSide:{
+        "champ2": {
+            name: "Dark Commander",
+            health: 26,
+            atk: 24
+        },
+        "min2-a":{
+            name:"Dark Dog",
+            health:18,
+            atk:7
+        },
+        "min2-b":{
+            name: "Dark Grunt",
+            health: 20,
+            atk: 5
+        },
+        "min2-c":{
+            name: "Dark Wizard",
+            health: 15,
+            atk: 10
+        }
+    },
+};
+
+//when cards are added
+/*
+gameobj.drkSide[newid] = {
+
+}
+*/
+
 $(document).ready(function () {
     $(".cards").draggable({
         opacity: .5,
@@ -259,17 +353,26 @@ $(document).ready(function () {
         }
     });
     // ask henry why no drop
-    $(" .darkMins ").droppable ({
+    $(".dark-mins").droppable ({
         drop: function (event, ui) {
-            $( darkMins )
-                alert("Please work");
+            var id = $(darkMins).attr("id");
+            gameobj.drkSide[id].atk += 10;
+
+            $("#cName").html(gameobj.drkSide[id].name);
+            $("#cHp").html("Health: " + gameobj.drkSide[id].health);
+            $("#cAtk").html("Attack: " + gameobj.drkSide[id].atk);
         }
     });
     
-    $(" .lightMins ").droppable ({
+    $(" .light-mins ").droppable ({
         drop: function(event, ui){
-            $( lightMins )
-                alert("lmao");
+            var id = $(lightMins).attr("id");
+            gameobj.lghtSide[id].atk += 10;
+
+            $("#cName").html(gameobj.drkSide[id].name);
+            $("#cHp").html("Health: " + gameobj.drkSide[id].health);
+            $("#cAtk").html("Attack: " + gameobj.drkSide[id].atk);
+
         }
     });
 
