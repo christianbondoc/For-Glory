@@ -20,7 +20,7 @@ body {
 
 }
 
-.john-cena {
+.commander {
     position: absolute;
     width: 235px;
     height: 320px; 
@@ -44,38 +44,38 @@ body {
 Left side of the field
 
 */ 
-#champ1 {
+#lightCommander {
     
     background-image: url("../assets/images/light/characters/Light_Commander.svg");
     left: 0px;
     
 } 
- #min1-a{
+ #lightArcher{
     left: 200px;
     background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
     width: 270px;
-}#min1-b{
+}#lightSoldier{
     left: 230px;
     background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
     width: 270px;
-}#min1-c{
+}#lightDog{
     left: 270px;
     background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
     width: 270px;
 } 
 /* Right side */
-#champ2 {  
+#darkCommander {  
     right: 2px;
     background-image: url("../assets/images/dark/characters/maskedmonster.svg")
 }
-#min2-a{
+#darkWizard{
     right: 150px;
     background-image: url("../assets/images/dark/characters/maskedwitch.svg");
     
-}#min2-b{
+}#darkGrunt{
     right: 225px;
     background-image: url("../assets/images/dark/characters/skyrzz.svg");
-}#min2-c{
+}#darkDog{
     right: 350px;
     background-image: url("../assets/images/dark/characters/maskdog.svg");
 }

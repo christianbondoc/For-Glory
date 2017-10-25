@@ -1,5 +1,5 @@
 // Class Variables
-var johnCena = document.getElementsByClassName("john-cena"),
+var commander = document.getElementsByClassName("commander"),
     leftField = document.getElementsByClassName("left-field"),
     rightField = document.getElementsByClassName("right-field"),
     dropArea = document.getElementsByClassName("dropArea"),
@@ -11,15 +11,15 @@ var johnCena = document.getElementsByClassName("john-cena"),
     smallCards = document.getElementsByClassName("small-cards");
 
 // ID Variables
-var champ1 = document.getElementById("champ1"),
-    lightMinA = document.getElementById("min1-a"),
-    lightMinB = document.getElementById("min1-b"),
-    lightMinC = document.getElementById("min1-c"),
+var LCommander = document.getElementById("lightCommander"),
+    LDog= document.getElementById("lightDog"),
+    LSoldier = document.getElementById("lightSoldier"),
+    LArcher = document.getElementById("lightArcher"),
 
-    champ2 = document.getElementById("champ2"),
-    darkMinA = document.getElementById("min2-a"),
-    darkMinB = document.getElementById("min2-b"),
-    darkMinC = document.getElementById("min2-c"),
+    DCommander = document.getElementById("darkCommander"),
+    DWizard = document.getElementById("darkWizard"),
+    DGrunt = document.getElementById("darkGrunt"),
+    DDog = document.getElementById("darkDog"),
 
     card1 = document.getElementById("card1"),
     card2 = document.getElementById("card2"),
@@ -48,17 +48,17 @@ var champ1 = document.getElementById("champ1"),
 
 
 // Card Arrays
-var lightArr = [{
-    cardName: "",
-    Health: "",
-    atk: ""
+// var lightArr = [{
+//     cardName: "",
+//     Health: "",
+//     atk: ""
 
-}]; // add card bg later
-var darkArr = [{
-    cardName: "",
-    Health: "",
-    atk: ""
-}];
+// }]; // add card bg later
+// var darkArr = [{
+//     cardName: "",
+//     Health: "",
+//     atk: ""
+// }];
 
 /*
 
@@ -125,107 +125,175 @@ var darkDog = {
     Health: 18
 }
 
-// Minion array idk how to use this
-var lightMinArr = [
-    lightMinA, lightMinB, lightMinC
-];
+// new henry obj
+var gameobj = {
+    lghtSide: {
+        "lightCommander": {
+            name: "Light Commander",
+            health: 32,
+            atk: 18
+        },
+        "lightDog": {
+            name: "Light Dog",
+            health: 15,
+            atk: 10
+        },
+        "lightSoldier": {
+            name: "Light Soldier",
+            health: 17,
+            atk: 8
+        },
+        "lightArcher": {
+            name: "Light Archer",
+            health: 15,
+            atk: 10
+        }
+    },
+    drkSide:{
+        "darkCommander": {
+            name: "Dark Commander",
+            health: 26,
+            atk: 24
+        },
+        "darkDog":{
+            name:"Dark Dog",
+            health:18,
+            atk:7
+        },
+        "darkGrunt":{
+            name: "Dark Grunt",
+            health: 20,
+            atk: 5
+        },
+        "darkWizard":{
+            name: "Dark Wizard",
+            health: 15,
+            atk: 10
+        }
+    },
+};
 
-var darkMinArr = [
-    darkMinA, darkMinB, darkMinC
-];
+
+var cardObj = {
+    lghtAttack10: {
+        "card3": {
+            atk: 10
+        },
+        "card2": {
+            atk: 10
+        },
+        "card1" : {
+            atk: 10
+        }
+    }
+};
+
+// var gameStatus = {
+//     players:[
+//         {
+//             monsters:{
+//                 "blah"
+//             }
+//         }
+//     ]
+// }
 
 
-var gameCards = [{
-    name: "",
-    atk: 0,
-    Health: 0
-}];
 
 function changeDiv(id){
     var name = gameobj.drkSide[id].name;
     var atk = gameobj.drkSide[id].atk;
     var health = gameobj.drkSide[id].health;
+    
+    cName.innerHTML = drkSide[id].name;
+    cHp.innerHTML = "Health: " + drkSide[id].health;
+    cAtk.innerHTML = "ATK: " + drkSide[id].atk;
 
+    cName.innerHTML = lghtSide[id].name;
+    cHp.innerHTML = "Health: " + lghtSide[id].health;
+    cAtk.innerHTML = "ATK: " + lghtSide[id].atk;
     //innerHTML stuff
 }
 
 var cards = document.getElementsByClassName("mon");
 
+// How to loop
 for(var i =0;i<cards.length; i++){
     cards[i].addEventListener("click", function(){
         changeDiv(this.id);
     })
 }
-champ1.addEventListener("click", function () {
-   
+
+
+LCommander.addEventListener("click", function () {   
     hoverPanel.style.display = "block";
-    console.log(lightCommander);
+    console.log(LCommander);
     cName.innerHTML = lightCommander.name
     cHp.innerHTML = "Health: " + lightCommander.Health;
     cAtk.innerHTML = "ATK: " + lightCommander.atk;
 });
 // Light Archer Click Function
-lightMinA.addEventListener("click", function () {
+LArcher.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(lightMinA);
+    console.log(LArcher);
     cName.innerHTML = lightArcher.name;
     cHp.innerHTML = "Health: " + lightArcher.Health;
     cAtk.innerHTML = "ATK: " + lightArcher.atk;
 });
 
 // Light Soldier Click Function
-lightMinB.addEventListener("click", function () {
+LSoldier.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(lightMinB);
+    console.log(LSoldier);
     cName.innerHTML = lightSoldier.name
     cHp.innerHTML = "Health: " + lightSoldier.Health;
     cAtk.innerHTML = "ATK: " + lightSoldier.atk;
 })
 
 // Light Dog Click Function
-lightMinC.addEventListener("click", function () {
+LDog.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(lightMinC);
+    console.log(LDog);
     cName.innerHTML = lightDog.name
     cHp.innerHTML = "Health: " + lightDog.Health;
     cAtk.innerHTML = "ATK: " + lightDog.atk;
 })
 
 // Dark Champion Click Function
-champ2.addEventListener("click", function () {
+DCommander.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(champ2);
+    console.log(darkCommander);
     cName.innerHTML = darkCommander.name;
     cHp.innerHTML = "Health: " + darkCommander.Health;
     cAtk.innerHTML = "ATK: " + darkCommander.atk;
 });
 
 // Dark Wizard Click Function
-darkMinA.addEventListener("click", function () {
+DWizard.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(darkMinA);
+    console.log(DWizard);
     // darkMin[0].name;
     // cName.innerHTML = darkMin[0].name;
 
     cName.innerHTML = darkWizard.name;
     cHp.innerHTML = "Health: " + darkWizard.Health;
     cAtk.innerHTML = "ATK: " + darkWizard.atk;
-    console.log(darkMinA);
+    
 });
 
 // Dark Grunt Click Function
-darkMinB.addEventListener("click", function () {
+DGrunt.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(darkMinB);
+    console.log(DGrunt);
     cName.innerHTML = darkGrunt.name;
     cHp.innerHTML = "Health: " + darkGrunt.Health;
     cAtk.innerHTML = "ATK: " + darkGrunt.atk;
 });
 
 // Dark Dog Click Function  
-darkMinC.addEventListener("click", function () {
+DDog.addEventListener("click", function () {
     hoverPanel.style.display = "block";
-    console.log(darkMinC);
+    console.log(DDog);
     cName.innerHTML = darkDog.name;
     cHp.innerHTML = "Health: " + darkDog.Health;
     cAtk.innerHTML = "ATK: " + darkDog.atk;
@@ -247,14 +315,14 @@ _____ _   _ _   _  ____ _____ ___ ___  _   _ ____
 
 function atkCalc() {
     if (darkMin == true) {
-        this.gameCards.atk + darkMinArr[i].atk;
+        this.cardObj.atk + darkMinArr[i].atk;
     } else {
-        gameCards.atk + lightMinArr[i].atk;
+        cardObj.atk + lightMinArr[i].atk;
     }
 };
 
 function hpCalc() {
-    this.gameCards.Health + darkMin[i].atk;
+    this.cardObj.Health + darkMin[i].atk;
 }
 
 /*
@@ -284,52 +352,7 @@ var lightDog = {
 
 
 // jQuery tears
-var gameobj = {
-    lghtSide: {
-        "champ1": {
-            name: "Light Commander",
-            health: 32,
-            atk: 18
-        },
-        "min1-a": {
-            name: "Light Dog",
-            health: 15,
-            atk: 10
-        },
-        "min1-b": {
-            name: "Light Soldier",
-            health: 17,
-            atk: 8
-        },
-        "min1-c": {
-            name: "Light Archer",
-            health: 15,
-            atk: 10
-        }
-    },
-    drkSide:{
-        "champ2": {
-            name: "Dark Commander",
-            health: 26,
-            atk: 24
-        },
-        "min2-a":{
-            name:"Dark Dog",
-            health:18,
-            atk:7
-        },
-        "min2-b":{
-            name: "Dark Grunt",
-            health: 20,
-            atk: 5
-        },
-        "min2-c":{
-            name: "Dark Wizard",
-            health: 15,
-            atk: 10
-        }
-    },
-};
+
 
 //when cards are added
 /*
@@ -338,13 +361,21 @@ gameobj.drkSide[newid] = {
 }
 */
 
+var dragid = "";
+
 $(document).ready(function () {
+
+// Cards to drag everywhere
+
     $(".cards").draggable({
         opacity: .5,
         containment: "body",
         scroll: false,
+        start: function( event, ui ) {
+            dragid = $(this).attr("id");
+        }
     });
-
+// test the dropping function
     $(".dropArea").droppable({
         drop: function (event, ui) {
             $(dropArea)
@@ -355,27 +386,35 @@ $(document).ready(function () {
     // ask henry why no drop
     $(".dark-mins").droppable ({
         drop: function (event, ui) {
-            var id = $(darkMins).attr("id");
+            var id = $(this).attr("id");
+
+            // Ask why gameobj does not interact with lghtAttack10
             gameobj.drkSide[id].atk += 10;
 
+            // Display all the hoverdiv things
             $("#cName").html(gameobj.drkSide[id].name);
             $("#cHp").html("Health: " + gameobj.drkSide[id].health);
-            $("#cAtk").html("Attack: " + gameobj.drkSide[id].atk);
+            $("#cAtk").html("Attack: " + gameobj.drkSide[id].atk);   
+            $("#hoverPanel").css("display", "block");
         }
+        // Ask Henry why no choose other ID
     });
     
     $(" .light-mins ").droppable ({
         drop: function(event, ui){
             var id = $(lightMins).attr("id");
-            gameobj.lghtSide[id].atk += 10;
+            gameobj.lghtSide[id].atk += cardObj.lghtAttack10.atk;
 
-            $("#cName").html(gameobj.drkSide[id].name);
-            $("#cHp").html("Health: " + gameobj.drkSide[id].health);
-            $("#cAtk").html("Attack: " + gameobj.drkSide[id].atk);
+            // Display all the hoverdiv things
+            $("#cName").html(gameobj.lghtSide[id].name);
+            $("#cHp").html("Health: " + gameobj.lghtSide[id].health);
+            $("#cAtk").html("Attack: " + gameobj.lghtSide[id].atk);
+            $("#hoverPanel").css("display", "block");
 
         }
     });
 
+    // Main menu toggle
     $("#main-menu").click(function(){
         $("#main-menu p").slideToggle();
     });
