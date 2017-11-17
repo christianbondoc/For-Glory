@@ -1,6 +1,10 @@
 body {
     margin: 0;
 }
+/* .main-container div {
+    background-size: cover;
+    background-repeat: no-repeat;
+} */
 * {
     background-size: cover;
     background-repeat: no-repeat;
@@ -83,7 +87,7 @@ Left side of the field
 #wrapper-cards {
     width: 100vw;
     height: 50vh;
-    background-image: url("../assets/images/backgrounds/master_hud.png");
+    background-image: url("../assets/images/backgrounds/master_hud.svg");
 }
 .cards {
     position: relative;
@@ -214,7 +218,6 @@ Left side of the field
 	}
 }
 
-
 #hoverPanel {
     width: 200px;
     height: 100px;
@@ -229,27 +232,3 @@ Left side of the field
     bottom: 0;
     left: 0;
 }
-
-
-#page {
-    display: none;
-}
-
-#loading {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    margin: auto;
-    z-index: 1001;
-    width: 25vw;
-    height: 25vh;
-    background-color: rgba(192, 192, 192, 0.5);
-    /* background-image: url("../assets/images/light/rondon.png"); */
-    background-image: url("https://orig00.deviantart.net/df77/f/2013/094/8/d/loading_logofinal_by_zegerdon-d60eb1v.gif");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-};

@@ -21,44 +21,52 @@ var gameObj = {
         "lightCommander": {
             name: "Light Commander",
             health: 32,
-            atk: 18
+            atk: 18,
+            minType: "light"
         },
         "lightDog": {
             name: "Light Dog",
             health: 15,
-            atk: 10
+            atk: 10,
+            minType: "light"
         },
         "lightSoldier": {
             name: "Light Soldier",
             health: 17,
-            atk: 8
+            atk: 8,
+            minType: "light"
         },
         "lightArcher": {
             name: "Light Archer",
             health: 15,
-            atk: 10
+            atk: 10,
+            minType: "light"
         }
     },
     drkSide:{
         "darkCommander": {
             name: "Dark Commander",
             health: 26,
-            atk: 24
+            atk: 24,
+            minType: "dark"
         },
         "darkDog":{
             name:"Dark Dog",
             health:18,
-            atk:7
+            atk:7,
+            minType: "dark"
         },
         "darkGrunt":{
             name: "Dark Grunt",
             health: 20,
-            atk: 5
+            atk: 5,
+            minType: "dark"
         },
         "darkWizard":{
             name: "Dark Wizard",
             health: 15,
-            atk: 10
+            atk: 10,
+            minType: "dark"
         }
     },
 };
@@ -113,26 +121,33 @@ io.on('connection', function(socket){
     
     // when someone sends an event, update status
     
-    socket.on('updateStatus', function(data){
+    // socket.on('updateStatus', function(data){
         
-        var getter = gameObj.lghtSide[data.getter].health;
-        var doer = gameObj.lghtSide[data.doer].atk;
-        
-        var result = getter - doer;
+    //     var attacker = data.minOne.atk;
+    //     var victim = data.minTwo.health;
+    //     // calculation of result
+    //     var result = victim - attacker;
+    //     // calculate number and set to result
+    //     //gameObj.??? = result;
+    //     //console.log(atkState.minTwo);
 
-        if (result <= 0){
-            getter = 0;
-        } else {
-            getter = result;
-        }
+    //     console.log("Min one is "+data.minOne)
+
+    //     console.log(result);
+
+    //     io.sockets.emit('gameStatus', gameObj);
+
+    //     // atkState = {
+    //     //     clickState: 0,
+    //     //     minOne: null,
+    //     //     minTwo: null
+    //     // }
         
-        gameObj.lghtSide[data.getter].health = getter;
-        
-        console.log(getter);
-        io.sockets.emit('gameStatus', gameObj);
+
         
         
-    });
+        
+    // });
     
     socket.on('updateDarkMin', function(data){
         
@@ -141,7 +156,7 @@ io.on('connection', function(socket){
 
         // .card and .monster are from updateObj
         
-        console.log(result + " DARK SIDE CHANGEd");
+        console.log(result + " DARK SIDE CHANGED");
 
         gameObj.drkSide[data.monster].atk = result;
         var result = gameObj.drkSide[data.monster].health + cardObj.drkSide[data.card].health// DARK SIDE ATK
@@ -168,4 +183,11 @@ io.on('connection', function(socket){
         io.sockets.emit('gameStatus', gameObj);
 
     });
+
+    socket.on('updateAttack', function (data) {
+
+
+
+    });
+
 });

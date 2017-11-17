@@ -1,4 +1,5 @@
 //Websocket variable
+
 var f_socket = io.connect('localhost:4000');
 
 // Link to app on heorku later
@@ -6,6 +7,7 @@ var f_socket = io.connect('localhost:4000');
 
 // Socket variable to connect to the server
 
+// GAMEOBJ TO COMMUNICATE WITH BACK END 
 f_socket.on('gameStatus', function(gameObj){
     
 // Class Variables
@@ -111,6 +113,8 @@ $(document).ready(function () {
 
 // jQuery function to pick up cards
 
+
+
     $(".cards").draggable({
         opacity: .3,
         containment: "body",
@@ -124,6 +128,7 @@ $(document).ready(function () {
             dragid = $(this).attr("id");
             // Changing card value to picked up card 
             updateObj.card = dragid;
+
         }
     });
 
@@ -137,14 +142,20 @@ $(document).ready(function () {
             updateObj.monster = dropid
             // Turning object from backend into a variable
             console.log(updateObj);
+
+            $(".healthUpSpSh").appendTo(this);
+            $(".healthUpSpSh").css("display", "block")
+            $(".healthUpSpSh").css("z-index", "100000")
+
             // Update server with drop function
             f_socket.emit('updateDarkMin', updateObj);
+
 
         }
         // Ask Henry why no choose other ID
     });
     
-    // When you drop card; change dark minion value
+    // When you drop card; change light minion value
 
     $(".light-mins").droppable({
         drop: function (event, ui) {
@@ -152,6 +163,7 @@ $(document).ready(function () {
 
             console.log(dropid);
             updateObj.monster = dropid;
+
 
             console.log(updateObj);
             // Update server with drop function
@@ -167,34 +179,7 @@ $(document).ready(function () {
     // Maybe make a lock div for this
 })
 
-/* Potentially change the main menu toggle to a main menu lock div */
-
-/* Loading screen */
-
-function onReady(callback) {
-    var intervalID = window.setInterval(checkReady, 2500);
-
-    function checkReady() {
-        if (document.getElementsByTagName('body')[0] !== undefined) {
-            window.clearInterval(intervalID);
-            callback.call(this);
-        }
-    }
-}
-
-function show(id, value) {
-    document.getElementById(id).style.display = value ? 'block' : 'none';
-}
-
-onReady(function () {
-    show('page', true);
-    show('loading', false);
-});
-
 // End jQuery
-
-
-
 
 // receiving events from the server
 // Calling gameObj via sockets
@@ -213,35 +198,115 @@ onReady(function () {
     // DARK SIDE 
     darkCommander.innerHTML = gameObj.drkSide.darkCommander.name + "<br>Health: " + gameObj.drkSide.darkCommander.health + "<br>Attack: " + gameObj.drkSide.darkCommander.atk;
     
-    darkDog.innerHTML = gameObj.drkSide.darkDog.name + "<br>Health: " + gameObj.drkSide.darkDog.health + "<br>Attack: " + gameObj.drkSide.darkDog.atk;
+    darkDog.innerHTML = gameObj.drkSide.darkDog.name + "<br>Health: " + gameObj.drkSide.darkDog.health + "<br>Attack: " + gameObj.drkSide.darkDog.atk + 
+    "<br>Type: " + gameObj.drkSide.darkDog.minType;
     
     darkGrunt.innerHTML = gameObj.drkSide.darkGrunt.name + "<br>Health: " + gameObj.drkSide.darkGrunt.health + "<br>Attack: " + gameObj.drkSide.darkGrunt.atk;
     
     darkWizard.innerHTML = gameObj.drkSide.darkWizard.name + "<br>Health: " + gameObj.drkSide.darkWizard.health + "<br>Attack: " + gameObj.drkSide.darkWizard.atk;
 
-});
+// CLICKABLE LOOPS
 
-var setState0 = null;
-    setState1 = null,
-    setState2 = null,
-    setState3 = null,
-    setState4 = null,
-    setState5 = null,
-    setState6 = null,
-    setState7 = null,
-    setState8 = null,
-    setState9 = null;
+    var atkState = {
+        //Setting state for clicking, starts at 0
+        clickState: 0,
+        // First minion clicked
+        minOne: null,
+        // Second minion
+        minTwo: null
+    };
+
+    monStats = document.getElementsByClassName("allMins");
+    // Click Monster Loop
+    
+    for (var i = 0; i < monStats.length; i++) {
+        monStats[i].addEventListener("click", function () {
+
+            var curMon = null;
+            // Confirming if light side
+            if (gameObj.lghtSide[this.id]){
+                curMon = gameObj.lghtSide[this.id];
+
+            // Confirming if dark side
+            } else {
+                curMon = gameObj.drkSide[this.id];
+            }
+
+                // vvvvvv FIRST CLICK vvvvvvvvv
+
+            if (atkState.clickState == 0) {
+
+                atkState.minOne = curMon;
+                // ClickState = 1 unit has been selected
+                atkState.clickState = 1;
+                //Confirming everything
+                console.log("State: " + atkState.clickState);
+
+            }
+
+
+            // Click state 2 is when minion is confirmed not same minion type vvvvvvv SECOND CLICK HERE vvvvvvv
+
+            else if (atkState.clickState == 1 && atkState.minOne.minType != curMon.minType) {
+
+                // 2nd clickstate
+                atkState.clickState = 2;
+                atkState.minTwo = curMon;
+                console.log("Click State is on state: "
+                    + atkState.clickState);
+                console.log(atkState.minTwo);
+                console.log("Curmon: "+ curMon);
+                
+                attackFunc();
+
+                //Send atkState to backend
+                // f_socket.emit('updateStatus', atkState)
+            } 
+            // Error log
+            else {
+                console.log("Invalid");
+            }
+        })
+    }
+
+    // clickState = 1 is when set minion is chosen
+
+    function attackFunc(){
+
+        var attacker = atkState.minOne.atk; 
+        var victim = atkState.minTwo.health;
+        var result = victim - attacker;
+        atkState.minTwo.health = result;
+        console.log(atkState.minTwo);
+        console.log(gameObj.lghtSide.lightSoldier.health);
+
+
+        // resetting the atkState
+        atkState = {
+            clickState:0,
+            minOne:null,
+            minTwo:null
+        }
+        console.log(atkState.clickState);
+    }
+
+
+
+}); // <--- this allows gameObj from backend to read to frontend 
+
+
+// Henry for questions 
 
 /*
 
     websocket id
-    states for attacks/and stuff !
-    changing cards size on drag
-    How to make loading screen that actually loads
-    neelam questions [x]
-    
+    states for attacks/and stuff ! [x]
+    changing cards size on drag (line 114) 
+
+    Ask henry why atkState.minOne/minTwo is not communicating properly with the gameObj stuff. Brings up [object, object] if we console.log(curMon)
+
     drawing card concept
         card deck array in back end [?]
 
+    hp < 0 : display: none / remove Child
 */
-
