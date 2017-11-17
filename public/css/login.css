@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+}
+#container {
+    position: absolute;
+    height: 55vh;
+    width: 55vw;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #f2f2f2;
+}
+
+#container img {
+    float: left; 
+    width: 25vw;
+}
+
+#inputs {
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+}
+
+#inputs input, button {
+    text-align: center;
+    width: 50%;
+    padding: 25px;
+}
