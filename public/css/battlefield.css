@@ -8,6 +8,8 @@ body {
 * {
     background-size: cover;
     background-repeat: no-repeat;
+    font-family: 'Roboto',
+    sans-serif;
 }
 
 .left-field {
@@ -218,17 +220,56 @@ Left side of the field
 	}
 }
 
-#hoverPanel {
+.nameTagCommanders { 
+background:url("../assets/images/ui-assets/nametag.svg") no-repeat;
+    background-size: contain;
+    height: 90px;
+    width: 313px;
+    position: absolute;
+    pointer-events: none;
+}
+
+#ntLightCommander {
+    top: 50px;
+}
+
+.nameTagMinions {
+    background: url("../assets/images/ui-assets/nametag.svg") no-repeat;
+    background-size: contain;
+    height: 90px;
     width: 200px;
-    height: 100px;
-    background-color: rgba(50, 50, 50, 0.75);
-    display: none;
-    z-index: 1000;
-    position: fixed;
-    text-align: center;
-    margin: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    position: absolute;
+    /* display: none */ 
+    pointer-events: none;
+}
+
+#ntLightDog { 
+    left: 510px;
+    top: 280px;
+}
+#ntLightSoldier {
+    left: 310px;
+    top: 250px;
+}
+#ntLightArcher {
+    left: 200px;
+    top: 190px;
+}
+
+#ntDarkCommander {
+    top: 25px;
+    right: 5px;
+}
+
+#ntDarkDog {
+    top: 250px;
+    right: 350px;
+}
+#ntDarkGrunt {
+    top: 190px;
+    right: 250px;
+}
+#ntDarkWizard { 
+    top: 250px;
+    right: 150px;
 }

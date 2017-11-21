@@ -1,9 +1,9 @@
 //Websocket variable
 
-var f_socket = io.connect('localhost:4000');
+// var f_socket = io.connect('localhost:4000');
 
 // Link to app on heorku later
-// var f_socket = io.connect('https://bcit-for-glory.herokuapp.com/');
+var f_socket = io.connect('https://bcit-for-glory.herokuapp.com/');
 
 // Socket variable to connect to the server
 
@@ -42,6 +42,20 @@ var lightCommander = document.getElementById("lightCommander"),
     cHp = document.getElementById("cHp"),
     cAtk = document.getElementById("cAtk"),
 
+
+    ntCommanders = document.getElementsByClassName("nameTagCommanders"),
+    ntMinions = document.getElementsByClassName("nameTagMinions"),
+
+    ntLightCommander = document.getElementById("ntLightCommander"),
+    ntLightArcher = document.getElementById("ntLightArcher"),
+    ntLightSoldier = document.getElementById("ntLightSoldier"),
+    ntLightDog = document.getElementById("ntLightDog"),
+
+    ntDarkCommander = document.getElementById("ntDarkCommander"),
+    ntDarkWizard = document.getElementById("ntDarkWizard"),
+    ntDarkGrunt = document.getElementById("ntDarkGrunt"),
+    ntDarkDog = document.getElementById("ntDarkDog"),
+
     discardPile = document.getElementById("discard-pile"),
     deckPile = document.getElementById("deck-pile");
 
@@ -77,9 +91,9 @@ function changeDiv(id, type){
         mon = gameObj.lghtSide[id];
     }
     
-    cName.innerHTML = mon.name;
-    cHp.innerHTML = "Health: " + mon.health;
-    cAtk.innerHTML = "Attack: " + mon.atk;
+    
+    
+
 
     /*cName.innerHTML = gameObj.lghtSide[id].name;
     cHp.innerHTML = "Health: " + gameObj.lghtSide[id].health;
@@ -187,23 +201,22 @@ $(document).ready(function () {
     console.log(gameObj);
     
     //LIGHT SIDE SERVER SIDE
-    lightCommander.innerHTML = gameObj.lghtSide.lightCommander.name + "<br>Health: " + gameObj.lghtSide.lightCommander.health + "<br>Attack: " + gameObj.lghtSide.lightCommander.atk;
+    ntLightCommander.innerHTML = "<div style='left: 30px; top: 10px; position: relative; display: block; font-size: 2em; color: white'>" + gameObj.lghtSide.lightCommander.name + "</div>" + "<div style='left: 220px; top: 55px; position: absolute; font-size: 1.1em; color: white'>" + gameObj.lghtSide.lightCommander.health + "</div>" + "<div style='left: 265px; top: 55px; position: absolute; font-size: 1.1em; color: white'>"+  gameObj.lghtSide.lightCommander.atk;
     
-    lightDog.innerHTML = gameObj.lghtSide.lightDog.name + "<br>Health: " + gameObj.lghtSide.lightDog.health + "<br>Attack: " + gameObj.lghtSide.lightDog.atk;
+    ntLightDog.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.lghtSide.lightDog.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightDog.health + "</div>" +  "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightDog.atk + "</div>" ;
     
-    lightSoldier.innerHTML = gameObj.lghtSide.lightSoldier.name + "<br>Health: " + gameObj.lghtSide.lightSoldier.health + "<br>Attack: " + gameObj.lghtSide.lightSoldier.atk;
+    ntLightSoldier.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.lghtSide.lightSoldier.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightSoldier.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightSoldier.atk + "</div>";
     
-    lightArcher.innerHTML = gameObj.lghtSide.lightArcher.name + "<br>Health: " + gameObj.lghtSide.lightArcher.health + "<br>Attack: " + gameObj.lghtSide.lightArcher.atk;
+    ntLightArcher.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.lghtSide.lightArcher.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightArcher.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightArcher.atk + "</div>";
     
     // DARK SIDE 
-    darkCommander.innerHTML = gameObj.drkSide.darkCommander.name + "<br>Health: " + gameObj.drkSide.darkCommander.health + "<br>Attack: " + gameObj.drkSide.darkCommander.atk;
+    ntDarkCommander.innerHTML = "<div style='left: 30px; top: 10px; position: relative; display: block; font-size: 2em; color: white'>" + gameObj.drkSide.darkCommander.name + "</div>" + "<div style='left: 220px; top: 55px; position: absolute; font-size: 1.1em; color: white'>" + gameObj.drkSide.darkCommander.health + "</div>" + "<div style='left: 265px; top: 55px; position: absolute; font-size: 1.1em; color: white'>"+ gameObj.drkSide.darkCommander.atk + "</div>";
     
-    darkDog.innerHTML = gameObj.drkSide.darkDog.name + "<br>Health: " + gameObj.drkSide.darkDog.health + "<br>Attack: " + gameObj.drkSide.darkDog.atk + 
-    "<br>Type: " + gameObj.drkSide.darkDog.minType;
+    ntDarkDog.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.drkSide.darkDog.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkDog.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkDog.atk + "</div>";
     
-    darkGrunt.innerHTML = gameObj.drkSide.darkGrunt.name + "<br>Health: " + gameObj.drkSide.darkGrunt.health + "<br>Attack: " + gameObj.drkSide.darkGrunt.atk;
+    ntDarkGrunt.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.drkSide.darkGrunt.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkGrunt.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" +  gameObj.drkSide.darkGrunt.atk + "</div>"; 
     
-    darkWizard.innerHTML = gameObj.drkSide.darkWizard.name + "<br>Health: " + gameObj.drkSide.darkWizard.health + "<br>Attack: " + gameObj.drkSide.darkWizard.atk;
+    ntDarkWizard.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.drkSide.darkWizard.name + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkWizard.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkWizard.atk + "</div>";
 
 // CLICKABLE LOOPS
 
@@ -213,23 +226,34 @@ $(document).ready(function () {
         // First minion clicked
         minOne: null,
         // Second minion
-        minTwo: null
+        minTwo: null,
+
+        monIdOne: null,
+        monIdTwo:null
     };
 
     monStats = document.getElementsByClassName("allMins");
-    // Click Monster Loop
     
+    // Click Monster Loop
     for (var i = 0; i < monStats.length; i++) {
         monStats[i].addEventListener("click", function () {
 
             var curMon = null;
+
             // Confirming if light side
             if (gameObj.lghtSide[this.id]){
                 curMon = gameObj.lghtSide[this.id];
 
+                console.log(gameObj.lghtSide[this.id]);
+                console.log("curMon: ", curMon);
+                monIdOne = [this.id];
+
+
             // Confirming if dark side
             } else {
                 curMon = gameObj.drkSide[this.id];
+                monIdOne = [this.id];
+                
             }
 
                 // vvvvvv FIRST CLICK vvvvvvvvv
@@ -242,6 +266,8 @@ $(document).ready(function () {
                 //Confirming everything
                 console.log("State: " + atkState.clickState);
 
+                atkState.monIdOne = [this.id];
+                console.log(atkState.monIdOne);
             }
 
 
@@ -256,11 +282,14 @@ $(document).ready(function () {
                     + atkState.clickState);
                 console.log(atkState.minTwo);
                 console.log("Curmon: "+ curMon);
+
+                atkState.monIdTwo = [this.id];
+                console.log(atkState.monIdTwo);
                 
-                attackFunc();
+
 
                 //Send atkState to backend
-                // f_socket.emit('updateStatus', atkState)
+                f_socket.emit('updateStatus', atkState)
             } 
             // Error log
             else {
@@ -283,9 +312,9 @@ $(document).ready(function () {
 
         // resetting the atkState
         atkState = {
-            clickState:0,
-            minOne:null,
-            minTwo:null
+            clickState: 0,
+            minOne: null,
+            minTwo: null
         }
         console.log(atkState.clickState);
     }
@@ -309,4 +338,7 @@ $(document).ready(function () {
         card deck array in back end [?]
 
     hp < 0 : display: none / remove Child
+
+    How to put different deck styles depending on dark vs light
+
 */

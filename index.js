@@ -115,39 +115,53 @@ var cardObj = {
     }
 };
 
+
+
 io.on('connection', function(socket){
     
     io.sockets.emit('gameStatus', gameObj);
     
     // when someone sends an event, update status
     
-    // socket.on('updateStatus', function(data){
+    socket.on('updateStatus', function(data){
+        console.log(data);
+        console.log("Min one is ", data.minOne)
+        console.log("Min Two is ", data.minTwo)
         
-    //     var attacker = data.minOne.atk;
-    //     var victim = data.minTwo.health;
-    //     // calculation of result
-    //     var result = victim - attacker;
-    //     // calculate number and set to result
-    //     //gameObj.??? = result;
-    //     //console.log(atkState.minTwo);
+        var attacker = data.minOne.atk;
+        var victim = data.minTwo.health;
+        // calculation of result
+        var result = victim - attacker;
+        // calculate number and set to result
+        console.log("The result is "+ result);
 
-    //     console.log("Min one is "+data.minOne)
+        if (data.minTwo.minType == "dark"){
+            console.log("The minion being attacked is dark");
 
-    //     console.log(result);
+            console.log(data.monIdTwo);
 
-    //     io.sockets.emit('gameStatus', gameObj);
+            gameObj.drkSide[data.monIdTwo].health = result;
+        } 
 
-    //     // atkState = {
-    //     //     clickState: 0,
-    //     //     minOne: null,
-    //     //     minTwo: null
-    //     // }
+        if (data.minTwo.minType == "light"){
+            console.log("The minion being attacked is light");
+
+            gameObj.lghtSide[data.monIdTwo].health = result;
+        } 
+
+        io.sockets.emit('gameStatus', gameObj);
+
+        // atkState = {
+        //     clickState: 0,
+        //     minOne: null,
+        //     minTwo: null
+        // }
         
 
         
         
         
-    // });
+    });
     
     socket.on('updateDarkMin', function(data){
         
