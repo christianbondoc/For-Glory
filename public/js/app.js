@@ -1,9 +1,9 @@
 //Websocket variable
 
-// var f_socket = io.connect('localhost:4000');
+var f_socket = io.connect('localhost:4000');
 
 // Link to app on heorku later
-var f_socket = io.connect('https://bcit-for-glory.herokuapp.com/');
+//var f_socket = io.connect('https://bcit-for-glory.herokuapp.com/');
 
 // Socket variable to connect to the server
 
@@ -55,9 +55,12 @@ var lightCommander = document.getElementById("lightCommander"),
     ntDarkWizard = document.getElementById("ntDarkWizard"),
     ntDarkGrunt = document.getElementById("ntDarkGrunt"),
     ntDarkDog = document.getElementById("ntDarkDog"),
-
+    
+    nameTag = document.getElementsByClassName("nameTag"),
+    ntActive = document.getElementsByClassName("nameTag-Active"),
     discardPile = document.getElementById("discard-pile"),
     deckPile = document.getElementById("deck-pile");
+
 
     
 // Dropping the cards 
@@ -90,10 +93,6 @@ function changeDiv(id, type){
     } else if (type == "light"){
         mon = gameObj.lghtSide[id];
     }
-    
-    
-    
-
 
     /*cName.innerHTML = gameObj.lghtSide[id].name;
     cHp.innerHTML = "Health: " + gameObj.lghtSide[id].health;
@@ -178,7 +177,6 @@ $(document).ready(function () {
             console.log(dropid);
             updateObj.monster = dropid;
 
-
             console.log(updateObj);
             // Update server with drop function
             f_socket.emit('updateLightMin', updateObj);
@@ -187,9 +185,7 @@ $(document).ready(function () {
     });
 
     // Main menu toggle
-    $("#main-menu").click(function(){
-        $("#main-menu p").slideToggle();
-    });
+
     // Maybe make a lock div for this
 })
 
@@ -198,7 +194,6 @@ $(document).ready(function () {
 // receiving events from the server
 // Calling gameObj via sockets
     
-    console.log(gameObj);
     
     //LIGHT SIDE SERVER SIDE
     ntLightCommander.innerHTML = "<div style='left: 30px; top: 10px; position: relative; display: block; font-size: 2em; color: white'>" + gameObj.lghtSide.lightCommander.name + "</div>" + "<div style='left: 220px; top: 55px; position: absolute; font-size: 1.1em; color: white'>" + gameObj.lghtSide.lightCommander.health + "</div>" + "<div style='left: 265px; top: 55px; position: absolute; font-size: 1.1em; color: white'>"+  gameObj.lghtSide.lightCommander.atk;
@@ -238,24 +233,21 @@ $(document).ready(function () {
     for (var i = 0; i < monStats.length; i++) {
         monStats[i].addEventListener("click", function () {
 
-            var curMon = null;
 
+            var curMon = null;
+            
             // Confirming if light side
             if (gameObj.lghtSide[this.id]){
                 curMon = gameObj.lghtSide[this.id];
-
-                console.log(gameObj.lghtSide[this.id]);
-                console.log("curMon: ", curMon);
                 monIdOne = [this.id];
 
-
             // Confirming if dark side
+            
             } else {
                 curMon = gameObj.drkSide[this.id];
                 monIdOne = [this.id];
                 
             }
-
                 // vvvvvv FIRST CLICK vvvvvvvvv
 
             if (atkState.clickState == 0) {
@@ -265,6 +257,7 @@ $(document).ready(function () {
                 atkState.clickState = 1;
                 //Confirming everything
                 console.log("State: " + atkState.clickState);
+
 
                 atkState.monIdOne = [this.id];
                 console.log(atkState.monIdOne);
