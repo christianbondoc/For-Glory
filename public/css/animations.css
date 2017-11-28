@@ -5,7 +5,7 @@
             height: 215px;
             width: 203px;
             background-image: url('../assets/images/animations/attack.png');
-            animation: attackplay 0.8s steps(4) infinite;
+            animation: attackplay 0.8s steps(4) 1s;
         }
 
         @keyframes attackplay {
@@ -33,7 +33,7 @@
             height: 200px;
             width: 221px;
             background-image: url('../assets/images/animations/attackup.png');
-            animation: attackupplay 1s steps(7) infinite;
+            animation: attackupplay 1s steps(7) 1s;
         }
 
         @keyframes attackupplay {
@@ -61,14 +61,26 @@
             height: 222px;
             width: 122px;
             background-image: url('../assets/images/animations/healthup.png');
-            animation: healthupplay 0.7s steps(12) infinite;
+            animation: healthupplay 0.7s steps(12) .1s;
+            display: none;
         }
 
         @keyframes healthupplay {
             0% {
+                display: none;
+            }
+            1% {
                 background-position: 0px 0px;
+                display: block;
+            }
+            50% {
+                opacity: 50; 
+            }
+            99% {
+                background-position: -1500px 0px;
+                opacity: 0;
             }
             100% {
-                background-position: -1500px 0px;
+                display: none;
             }
         }

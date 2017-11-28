@@ -71,17 +71,6 @@ var gameObj = {
     },
 };
 
-
-// ORIGINAL CARDOBJ
-//var cardObj = {
-//    lghtSide: {
-//        "card1":{
-//            name: "Card 1",
-//            atk: 10
-//            }
-//    }
-//};
-
 // COPYPASTA CARD OBJECT
 var cardObj = {
     lghtSide: {
@@ -135,6 +124,9 @@ io.on('connection', function(socket){
         // calculate number and set to result
         console.log("The result is "+ result);
 
+
+
+
         if (data.minTwo.minType == "dark"){
             console.log("The minion being attacked is dark");
 
@@ -149,6 +141,23 @@ io.on('connection', function(socket){
             gameObj.lghtSide[data.monIdTwo].health = result;
         } 
 
+
+        // Once health is below 0
+        if (result <= 0) {
+            console.log([data.minTwo.name], " has died");
+            // Remove minion somehow 
+
+            minDied = delete data.minTwo.this;
+            console.log("The minioned died T/F", minDied);
+            
+            if (minDied == true) {
+                // Do thing to destory minion
+                console.log("Need to add function to destory minion");
+ 
+
+            }
+        }
+
         io.sockets.emit('gameStatus', gameObj);
 
         // atkState = {
@@ -156,10 +165,6 @@ io.on('connection', function(socket){
         //     minOne: null,
         //     minTwo: null
         // }
-        
-
-        
-        
         
     });
     
@@ -180,6 +185,8 @@ io.on('connection', function(socket){
         console.log(result + " DARK SIDE CHANGEd");
         gameObj.drkSide[data.monster].health = result;
         // DARK SIDE HEALTH
+
+
         io.sockets.emit('gameStatus', gameObj);
         
     });

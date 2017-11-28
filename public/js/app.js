@@ -76,13 +76,6 @@ var updateObj = {
  | (_) | _ \ || | _| (__  | | \__ \_|
   \___/|___/\__/|___\___| |_| |___(_)
   */
-    // new henry obj
-
-
-// var cardObj
-
-
-// How to make loop for clicks?????
 
 function changeDiv(id, type){
 
@@ -132,6 +125,9 @@ $(document).ready(function () {
         opacity: .3,
         containment: "body",
         scroll: false,  
+        /* Fix snapping to mins, and back to place */
+        snap: ".dark-mins",
+        snap: ".light-mins",
 
         /* Fix this for UX purposes */
         // How to change height/width of clicked object
@@ -156,9 +152,7 @@ $(document).ready(function () {
             // Turning object from backend into a variable
             console.log(updateObj);
 
-            $(".healthUpSpSh").appendTo(this);
-            $(".healthUpSpSh").css("display", "block")
-            $(".healthUpSpSh").css("z-index", "100000")
+            $(".attackUpSpSh").appendTo(this);
 
             // Update server with drop function
             f_socket.emit('updateDarkMin', updateObj);
@@ -222,7 +216,6 @@ $(document).ready(function () {
         minOne: null,
         // Second minion
         minTwo: null,
-
         monIdOne: null,
         monIdTwo:null
     };
@@ -233,7 +226,6 @@ $(document).ready(function () {
     for (var i = 0; i < monStats.length; i++) {
         monStats[i].addEventListener("click", function () {
 
-
             var curMon = null;
             
             // Confirming if light side
@@ -242,11 +234,9 @@ $(document).ready(function () {
                 monIdOne = [this.id];
 
             // Confirming if dark side
-            
             } else {
                 curMon = gameObj.drkSide[this.id];
-                monIdOne = [this.id];
-                
+                monIdOne = [this.id];   
             }
                 // vvvvvv FIRST CLICK vvvvvvvvv
 
@@ -257,7 +247,6 @@ $(document).ready(function () {
                 atkState.clickState = 1;
                 //Confirming everything
                 console.log("State: " + atkState.clickState);
-
 
                 atkState.monIdOne = [this.id];
                 console.log(atkState.monIdOne);
@@ -279,8 +268,6 @@ $(document).ready(function () {
                 atkState.monIdTwo = [this.id];
                 console.log(atkState.monIdTwo);
                 
-
-
                 //Send atkState to backend
                 f_socket.emit('updateStatus', atkState)
             } 
@@ -302,7 +289,6 @@ $(document).ready(function () {
         console.log(atkState.minTwo);
         console.log(gameObj.lghtSide.lightSoldier.health);
 
-
         // resetting the atkState
         atkState = {
             clickState: 0,
@@ -312,26 +298,24 @@ $(document).ready(function () {
         console.log(atkState.clickState);
     }
 
-
-
 }); // <--- this allows gameObj from backend to read to frontend 
 
 
 // Henry for questions 
 
 /*
-
-    websocket id
-    states for attacks/and stuff ! [x]
-    changing cards size on drag (line 114) 
+ 
 
     Ask henry why atkState.minOne/minTwo is not communicating properly with the gameObj stuff. Brings up [object, object] if we console.log(curMon)
 
     drawing card concept
         card deck array in back end [?]
 
-    hp < 0 : display: none / remove Child
+    hp < 0 : display: none / remove Child backend thing
 
     How to put different deck styles depending on dark vs light
 
+    how to fix animations
+
+    How to make back end result <= 0 disappear
 */

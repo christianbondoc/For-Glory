@@ -6,7 +6,7 @@ body {
     background-repeat: no-repeat;
 } */
 * {
-    background-size: cover;
+
     background-repeat: no-repeat;
     font-family: 'Roboto',
     sans-serif;
@@ -26,6 +26,7 @@ body {
 
 }
 
+
 .commander {
     position: absolute;
     width: 235px;
@@ -36,7 +37,9 @@ body {
     
 }
 
-.light-mins, .dark-mins{
+
+
+.smallMin {
     position: absolute;
     width: 125px;
     height: 125px;
@@ -53,15 +56,17 @@ Left side of the field
 */ 
 #lightCommander {
     
-    background-image: url("../assets/images/light/characters/Light_Commander.svg");
+    background-image: url("../assets/images/light/characters/Light-Commander.gif");
     left: 0px;
 } 
  #lightArcher{
     left: 200px;
-    background-image: url("../assets/images/light/characters/Light_Archer.svg");
+    height: 170px;
+    width: 170px;
+    background-image: url("../assets/images/light/characters/Light-archer.gif");
 }#lightSoldier{
     left: 350px;
-    background-image: url("../assets/images/light/characters/Light_Soldier.svg");
+    background-image: url("../assets/images/light/characters/Light-Soldier.gif");
 }#lightDog{
     left: 510px;
     background-image: url("../assets/images/light/characters/Light_Minion_1.svg");
@@ -90,7 +95,9 @@ Left side of the field
     width: 100vw;
     height: 50vh;
     background-image: url("../assets/images/backgrounds/master_hud.svg");
+    
 }
+      
 .cards {
     position: relative;
     z-index: 10;
@@ -101,6 +108,7 @@ Left side of the field
     display: inline-block;
     margin: auto;
     right: 25px;
+    background-size: cover;
 }
 
 .cards:hover {
@@ -128,6 +136,7 @@ Left side of the field
     top: 20px;
     float: right;
     background-image: url("../assets/images/cardback.png");
+    background-size: cover;
 }
 
 #discard-pile {
@@ -185,25 +194,32 @@ Left side of the field
 } */
 
 #water-field {
-    background-image: url("../assets/images/backgrounds/master_layer4.png");
+    background-image: url("../assets/images/backgrounds/bg4.png");
     z-index: -100;
+    position: absolute;
+    top: 35px;
+    background-size: cover;
 }
 /* the one they stand on*/
 
-/* #foreground-field {
-    background-image:url("../assets/images/backgrounds/master_layer1.png");
+#foreground-field {
+    background-image:url("../assets/images/backgrounds/bg1.png");
     z-index: 100;
     border-bottom: 35px;
-} */
+    pointer-events: none;
+    background-size: cover;
+}
 
 #middleground-field {
-    background-image:url("../assets/images/backgrounds/master_layer2.png");
+    background-image:url("../assets/images/backgrounds/bg2.png");
     z-index: 10;
+    background-size: cover;
     
 }
 #waterground-field {
-    background-image: url("../assets/images/backgrounds/master_layer3.png");
+    background-image: url("../assets/images/backgrounds/bg3.png");
     z-index: -10;
+    background-size: cover;
 }
 @keyframes hoverTEST {
     0% {
@@ -222,12 +238,11 @@ Left side of the field
 
 .nameTag {
     background:url("../assets/images/ui-assets/nametag.svg") no-repeat;
-    display: none;
 }
-
+/* 
 .nameTag-Active {
     display: block;
-}
+} */
 
 .nameTagCommanders { 
     background-size: contain;
@@ -282,4 +297,6 @@ Left side of the field
     right: 150px;
 }
 
-
+.minionSelected {
+    box-shadow: 0px 0px 5px #fff;
+}
