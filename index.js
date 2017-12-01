@@ -16,6 +16,11 @@ app.use(express.static('public'));
 server.listen(port, function () {
     console.log("The server is running.");
 });
+
+var rooms = [];
+
+
+
 var gameObj = {
     lghtSide: {
         "lightCommander": {
@@ -108,8 +113,40 @@ var cardObj = {
 
 io.on('connection', function(socket){
     
-    io.sockets.emit('gameStatus', gameObj);
+
+
+
+
+    //Rooms
+    socket.on('new_room', function(data){
+
+        var room = data;
+        // pushes the room to the server side array so everyone sees the same thing when they open the page
+        rooms.push(room);
+        // user joins the room upon creating it
+        socket.join(data.room);
+        // using the console to ensure that the join was successful.  appears in console bc it's server side.
+        console.log("Joined room " + data.room)
+        console.log("Data is ", data)
+        // emits the rooms array back to the other sockets
+        
+        
+
+        io.sockets.emit('new_room', rooms);
+
+    })
+
+
+    // this function allows a user to join their selected room with data sent by ndiv's event listener
+    socket.on('join_room', function (roomname) {
+        // joining the room
+        socket.join(roomname);
+        // using the console to ensure that the join was successful.  appears in console bc it's server side.
+        console.log("Joined room " + roomname)
+    });
     
+
+    io.sockets.emit('gameStatus', gameObj, rooms);
     // when someone sends an event, update status
     
     socket.on('updateStatus', function(data){
@@ -142,8 +179,9 @@ io.on('connection', function(socket){
         } 
 
 
+        console.log(result);
         // Once health is below 0
-        if (result <= 0) {
+        /*if (result <= 0) {
             console.log([data.minTwo.name], " has died");
             // Remove minion somehow 
 
@@ -156,7 +194,7 @@ io.on('connection', function(socket){
  
 
             }
-        }
+        }*/
 
         io.sockets.emit('gameStatus', gameObj);
 
