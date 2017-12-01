@@ -14,6 +14,7 @@
     var join2 = document.getElementById("join2");
     var host1 = document.getElementById("host1");
     var host2 = document.getElementById("host2");
+
     var charMenu = document.getElementById("charMenu");
     var signIn = document.getElementById("signIn");
     var mMaking = document.getElementById("mMaking");
@@ -31,6 +32,7 @@
     var chars6 = document.getElementById("chars6");
     var chars7 = document.getElementById("chars7");
     var chars8 = document.getElementById("chars8");
+    var roomDiv = document.getElementById("roomDiv");
     
     signIn.addEventListener("click", function(){
         menuA.style.display = "none";
@@ -40,6 +42,15 @@
     mMaking.addEventListener("click", function(){
         menuA.style.display = "none";
         menuC.style.display = "block";
+
+        var hostInput = document.getElementById("hostInput").value;
+        f_socket.emit('new_room', {
+            room: hostInput
+        });
+
+        curroom = hostInput
+        console.log(curroom);
+        
     });
     
      back2.addEventListener("click", function(){
@@ -79,14 +90,28 @@
         charMenu.style.display = "block";
       });
 
+
+
+
       join2.addEventListener("click", function(){
         jMenu.style.display = "none";
         charMenu.style.display = "block";
       });
 
+      roomDiv.addEventListener("click", function(){
+
+          roomDiv.style.textShadow = "5px 5px 1px #ff0000,10px 10px 1px #0000ff";
+
+          // Send what room has been joined
+
+      })
+
       readyP.addEventListener("click", function(){
         container1.style.display = "none";
         container2.style.display = "block";
+
+
+
       });
 
        back6.addEventListener("click", function(){
@@ -169,6 +194,8 @@ f_socket.on('new_room', function (data) {
         
         var ndiv = document.createElement("div");
         // makes the inner html of the room the div
+        
+        
         ndiv.innerHTML = data[i].room;
         
         roomDiv.appendChild(ndiv);
@@ -196,17 +223,14 @@ f_socket.on('new_room', function (data) {
     host2.addEventListener("click", function() {
     
     var hostInput = document.getElementById("hostInput").value;    
-    
         f_socket.emit('new_room', {
-
         room: hostInput
         });
 
     curroom = hostInput
-        console.log(hostInput);
-        console.log(curroom);
+    console.log(curroom);
+
     });
-    
 
 
 
@@ -254,6 +278,7 @@ _____ _   _ _   _  ____ _____ ___ ___  _   _ ____
 | |_  | | | |  \| | |     | |  | | | | |  \| \___ \ 
 |  _| | |_| | |\  | |___  | |  | | |_| | |\  |___) |
 |_|    \___/|_| \_|\____| |_| |___\___/|_| \_|____/      
+
 */
 
 
@@ -285,9 +310,6 @@ $(".bgScroll").mousemove(function(e){
         opacity: .3,
         containment: "#container2",
         scroll: false,  
-        /* Fix snapping to mins, and back to place */
-        snap: ".dark-mins",
-        snap: ".light-mins",
 
         /* Fix this for UX purposes */
         // How to change height/width of clicked object
@@ -297,8 +319,8 @@ $(".bgScroll").mousemove(function(e){
             dragid = $(this).attr("id");
             // Changing card value to picked up card 
             updateObj.card = dragid;
-
         }
+        
     });
 
     // When you drop card; change dark minion value
@@ -383,6 +405,7 @@ f_socket.on('gameStatus', function (tgameObj) {
 
                     atkState.monIdOne = [this.id];
                     console.log(atkState.monIdOne);
+                    alert(atkState.monIdOne);
                 }
 
 
@@ -407,6 +430,7 @@ f_socket.on('gameStatus', function (tgameObj) {
                 // Error log
                 else {
                     console.log("Invalid");
+                    alert("You can't attack your own team!");
                 }
             })
         }
@@ -425,10 +449,14 @@ f_socket.on('gameStatus', function (tgameObj) {
         if (gameObj.lghtSide[i].health <= 0) {
             $("#"+i).remove();
             removeMinCountLight++;
+
+            deadminFunc;
+
             console.log(removeMinCountLight);
                 if (removeMinCountLight == 4) {
                     removeMinCountLight = 0;
-                    console.log("Add reset function here");
+
+                    alert("All the light niggas has died!");
                 }
         }
     }
@@ -447,7 +475,8 @@ f_socket.on('gameStatus', function (tgameObj) {
             console.log(removeMinCountDark);
             if (removeMinCountDark == 4) {
                 removeMinCountDark = 0;
-                console.log("Add reset function here");
+
+                alert("All them dark niggas ded!!!");
             }
         }
     }
@@ -524,10 +553,79 @@ f_socket.on('gameStatus', function (tgameObj) {
     drawing card concept
         card deck array in back end [?]
 
-    hp < 0 : display: none / remove Child backend thing
-
-    How to put different deck styles depending on dark vs light
 
     how to fix animations
 
     How to make back end result <= 0 disappear */ 
+
+    lightDog.addEventListener("mouseover", function () {
+        ntlightDog.style.display = "block";
+    });
+
+    lightDog.addEventListener("mouseout", function () {
+        ntlightDog.style.display = "none";
+    });
+
+
+    lightSoldier.addEventListener("mouseover", function () {
+        ntlightSoldier.style.display = "block";
+    });
+
+    lightSoldier.addEventListener("mouseout", function () {
+        ntlightSoldier.style.display = "none";
+    });
+
+    lightArcher.addEventListener("mouseover", function () {
+        ntlightArcher.style.display = "block";
+    });
+
+    lightArcher.addEventListener("mouseout", function () {
+        ntlightArcher.style.display = "none";
+    });
+
+    lightCommander.addEventListener("mouseover", function () {
+        ntlightCommander.style.display = "block";
+    });
+
+    lightCommander.addEventListener("mouseout", function () {
+        ntlightCommander.style.display = "none";
+    });
+
+    darkCommander.addEventListener("mouseover", function () {
+        ntdarkCommander.style.display = "block";
+    });
+
+    darkCommander.addEventListener("mouseout", function () {
+        ntdarkCommander.style.display = "none";
+    });
+
+    darkDog.addEventListener("mouseover", function () {
+        ntdarkDog.style.display = "block";
+    });
+
+    darkDog.addEventListener("mouseout", function () {
+        ntdarkDog.style.display = "none";
+    });
+
+    darkWizard.addEventListener("mouseover", function () {
+        ntdarkWizard.style.display = "block";
+    });
+
+    darkWizard.addEventListener("mouseout", function () {
+        ntdarkWizard.style.display = "none";
+    });
+
+    darkGrunt.addEventListener("mouseover", function () {
+        ntdarkGrunt.style.display = "block";
+    });
+
+    darkGrunt.addEventListener("mouseout", function () {
+        ntdarkGrunt.style.display = "none";
+    });
+
+    function deadminFunc(){
+    
+        console.log("deadMinFunc is thinking?");
+        setInterval(function() { alert("Hello"); }, 1500);
+
+    };

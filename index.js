@@ -130,6 +130,11 @@ io.on('connection', function(socket){
         console.log("Data is ", data)
         // emits the rooms array back to the other sockets
         
+        /* How to do
+            if (data == ''){
+                Cannot join a room, please select room
+            }
+        */
         
 
         io.sockets.emit('new_room', rooms);
