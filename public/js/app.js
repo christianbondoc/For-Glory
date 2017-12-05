@@ -1,3 +1,20 @@
+//Websocket variable
+
+var f_socket = io.connect('localhost:4000');
+var gameObj = null;
+var start = false;
+// Link to app on heorku later
+// var f_socket = io.connect('https://bcit-for-glory.herokuapp.com/');
+
+// Socket variable to connect to the server
+
+
+// ROOMS STUFF
+var curroom = "";
+
+
+
+
 //    Main menu Navigation
     var char8Name = document.getElementById("char8Name");
     var startBtn = document.getElementById("startBtn");
@@ -32,6 +49,7 @@
     var chars6 = document.getElementById("chars6");
     var chars7 = document.getElementById("chars7");
     var chars8 = document.getElementById("chars8");
+    var endTurnBtn = document.getElementById("endTurnBtn");
     var roomDiv = document.getElementById("roomDiv");
     
     signIn.addEventListener("click", function(){
@@ -41,16 +59,7 @@
     
     mMaking.addEventListener("click", function(){
         menuA.style.display = "none";
-        menuC.style.display = "block";
-
-        var hostInput = document.getElementById("hostInput").value;
-        f_socket.emit('new_room', {
-            room: hostInput
-        });
-
-        curroom = hostInput
-        console.log(curroom);
-        
+        menuC.style.display = "block";   
     });
     
      back2.addEventListener("click", function(){
@@ -63,9 +72,71 @@
         menuC.style.display = "none";
     });
     
+
+
+    
+
     join1.addEventListener("click", function(){
+        
+        f_socket.emit("getrooms")
+
         jMenu.style.display = "block";
         mMenu.style.display = "none";
+
+        f_socket.on("joinrooms", function(data){
+
+            console.log(data);
+
+            for (var i in data) {
+
+                var ndiv = document.createElement("div");
+                // makes the inner html of the room the div
+
+
+                ndiv.innerHTML = data[i].room;
+
+                roomDiv.appendChild(ndiv);
+                // gives the room a div id which matches the name of the room
+
+                ndiv.id = data[i].room;
+
+
+                // this adds an event listener to the new div created
+
+                ndiv.addEventListener("click", function () {
+                    // variable contains the id of the div
+
+                    var roomname = this.id;
+
+                    console.log("This room's id is " + roomname)
+                    // this emit sends the variable we just created over to the server so that we can use the data to make the user join their selected room
+
+                    f_socket.emit("join_room", roomname);
+                    // this sets a local variable to be used for sending events back and forth
+                    curroom = roomname;
+                    console.log(roomname);
+
+                    var pn = f_socket.id;
+
+                    console.log("The player's number is now " + pn);
+
+                    if (gameObj.p1 == null) {
+                        f_socket.emit('updateP1', {
+                            pn: pn,
+                            roomname: curroom
+                        });
+                    } else if (gameObj.p2 == null) {
+                        f_socket.emit('updateP2', {
+                            pn: pn,
+                            roomname: curroom
+                        })
+                    }
+                });
+            }
+
+
+        })
+
     });
     
     
@@ -120,18 +191,6 @@
           menuC.style.display = "block";
     });
     
-
-
-//Websocket variable
-
-var f_socket = io.connect('localhost:4000');
-var gameObj = null;
-var start = false;
-// Link to app on heorku later
-// var f_socket = io.connect('https://bcit-for-glory.herokuapp.com/');
-
-// Socket variable to connect to the server
-    
 // Class Variables
 var commander = document.getElementsByClassName("commander"),
     leftField = document.getElementsByClassName("left-field"),
@@ -183,42 +242,6 @@ var lightCommander = document.getElementById("lightCommander"),
     roomDiv = document.getElementById("roomDiv");
     deckPile = document.getElementById("deck-pile");
     
-    // ROOMS STUFF
-var curroom = "";
-    
-
-f_socket.on('new_room', function (data) {
-    console.log(data);
-    // this loop populates the roomlist div
-    for (var i in data) {
-        
-        var ndiv = document.createElement("div");
-        // makes the inner html of the room the div
-        
-        
-        ndiv.innerHTML = data[i].room;
-        
-        roomDiv.appendChild(ndiv);
-        // gives the room a div id which matches the name of the room
-        
-        ndiv.id = data[i].room;
-        // this adds an event listener to the new div created
-        
-        ndiv.addEventListener("click", function () {
-         // variable contains the id of the div
-        
-         var roomname = this.id;
-        
-        console.log("This room's id is " + roomname)
-        // this emit sends the variable we just created over to the server so that we can use the data to make the user join their selected room
-        
-        f_socket.emit("join_room", roomname);
-        // this sets a local variable to be used for sending events back and forth
-            
-        curroom = roomname;
-        });
-    }
-});
 
     host2.addEventListener("click", function() {
     
@@ -229,6 +252,22 @@ f_socket.on('new_room', function (data) {
 
     curroom = hostInput
     console.log(curroom);
+
+        var pn = f_socket.id;
+
+        console.log("The player's number is now " + pn);
+
+        if (gameObj.p1 == null) {
+            f_socket.emit('updateP1', {
+                pn: pn,
+                roomname: curroom
+            });
+        } else if (gameObj.p2 == null) {
+            f_socket.emit('updateP2', {
+                pn: pn,
+                roomname: curroom
+            })
+        }
 
     });
 
@@ -337,7 +376,11 @@ $(".bgScroll").mousemove(function(e){
             $(".attackUpSpSh").appendTo(this);
 
             // Update server with drop function
-            f_socket.emit('updateDarkMin', updateObj);
+
+            f_socket.emit('updateDarkMin', {
+                backendUpdateObj: updateObj,
+                roomname: curroom
+            });
 
 
         }
@@ -354,8 +397,14 @@ $(".bgScroll").mousemove(function(e){
             updateObj.monster = dropid;
 
             console.log(updateObj);
+
             // Update server with drop function
-            f_socket.emit('updateLightMin', updateObj);
+            f_socket.emit('updateLightMin', {
+                backendUpdateObj: updateObj,
+                roomname: curroom
+            });
+
+            // Feedback attempt
             $(".attackUpSpSh").appendTo(this);
 
             }
@@ -370,9 +419,12 @@ $(".bgScroll").mousemove(function(e){
 
 // receiving events from the server
 // Calling gameObj via sockets
-    
+
+
+
 // GAMEOBJ TO COMMUNICATE WITH BACK END 
 f_socket.on('gameStatus', function (tgameObj) {
+    console.log(tgameObj);
     if (gameObj == null && start == false) {
         start = true;
         monStats = document.getElementsByClassName("allMins");
@@ -405,7 +457,7 @@ f_socket.on('gameStatus', function (tgameObj) {
 
                     atkState.monIdOne = [this.id];
                     console.log(atkState.monIdOne);
-                    alert(atkState.monIdOne);
+                    console.log("Monster being selected for first click is: ",atkState.monIdOne);
                 }
 
 
@@ -425,7 +477,11 @@ f_socket.on('gameStatus', function (tgameObj) {
                     console.log(atkState.monIdTwo);
 
                     //Send atkState to backend
-                    f_socket.emit('updateStatus', atkState)
+                    f_socket.emit('updateStatus', {
+                        backendUpdateObj: atkState,
+                        roomname: curroom,
+                    });
+
                 }
                 // Error log
                 else {
@@ -438,10 +494,16 @@ f_socket.on('gameStatus', function (tgameObj) {
     atkState = {
         clickState: 0,
         minOne: null,
-        minTwo: null
+        minTwo: null,
+        backendUpdateObj: updateObj,
+        roomname: curroom
     }
     gameObj = tgameObj;
-    
+
+
+
+// Minion dying/removed/died/dead
+
     var removeMinCountLight = 0;
     var removeMinCountDark = 0;
 
@@ -450,33 +512,71 @@ f_socket.on('gameStatus', function (tgameObj) {
             $("#"+i).remove();
             removeMinCountLight++;
 
-            deadminFunc;
+
+        f_socket.emit('lightsideUpdateDeath', {
+            monster: gameObj.lghtSide[i],
+            roomname: curroom
+            
+        }) 
+
 
             console.log(removeMinCountLight);
                 if (removeMinCountLight == 4) {
                     removeMinCountLight = 0;
 
-                    alert("All the light niggas has died!");
+
+                    alert("The Wellman and his cutthroat crew has won!!");
+
                 }
         }
     }
+
+    // Name Tag Remove
     for (var i in gameObj.lghtSide) {
         if (gameObj.lghtSide[i].health <= 0){
             $("#nt"+i).remove();
+
             
+
+
         }
     }
 
+    var moni = null;
+    var moni2 = null;
+
     for (var i in gameObj.drkSide) {
+        console.log(i);
+        // Outputs all the objects in the darkside
+        
         if (gameObj.drkSide[i].health <= 0) {
-            $("#" + i).remove();
-            
+
+            // moni = gameObj.drkSide[i];
+
+            moni = i;
+            console.log(moni, moni2);
+            document.getElementById(i).style.animation = animations[i].death;
+
+            console.log(moni);
+
+            setTimeout(function () {
+                $("#" + moni).remove();
+
+                moni = null;
+                moni2 = null;
+
+                console.log(moni, moni2);
+            }, 1500);
+
+
+// ^^ if inside If statement/timeout, moni = null and moni2 = null, but outside of if statement, moni = id but does not disappear. //If it is inside, somethingsometihng does not attack properly. 
+
             removeMinCountDark++;
-            console.log(removeMinCountDark);
+            console.log("Remove minion count: " + removeMinCountDark);
             if (removeMinCountDark == 4) {
                 removeMinCountDark = 0;
 
-                alert("All them dark niggas ded!!!");
+                alert("The Valkyire has risen against the competition!!");
             }
         }
     }
@@ -497,14 +597,19 @@ f_socket.on('gameStatus', function (tgameObj) {
     ntlightArcher.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.lghtSide.lightArcher.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightArcher.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.lghtSide.lightArcher.atk + "</div>";
     
     // DARK SIDE 
-    ntdarkCommander.innerHTML = gameObj.drkSide.darkCommander.name  + "<div style='left: 220px; top: 55px; position: absolute; font-size: 1.1em; color: white'>" + gameObj.drkSide.darkCommander.health + "</div>" + "<div style='left: 265px; top: 55px; position: absolute; font-size: 1.1em; color: white'>"+ gameObj.drkSide.darkCommander.atk + "</div>";
+    ntdarkCommander.innerHTML = 
+        "<div style='left: 23px; top: 10px; position: relative; display: block; font-size: 1.9em; color: white'>"+  gameObj.drkSide.darkCommander.name +"</div>" + "<div style='left: 220px; top: 55px; position: absolute; font-size: 1.1em; color: white'>" + gameObj.drkSide.darkCommander.health + "</div>" + "<div style='left: 265px; top: 55px; position: absolute; font-size: 1.1em; color: white'>"+ gameObj.drkSide.darkCommander.atk + "</div>";
     
     ntdarkDog.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.drkSide.darkDog.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkDog.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkDog.atk + "</div>";
     
     ntdarkGrunt.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.drkSide.darkGrunt.name + "</div>" + "<div style='left: 145px; top: 10px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkGrunt.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" +  gameObj.drkSide.darkGrunt.atk + "</div>"; 
     
     ntdarkWizard.innerHTML = "<div style='left: 65px; top: 5px; position: relative; display: block; font-size: 1.2em; color: white'>" + gameObj.drkSide.darkWizard.name + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkWizard.health + "</div>" + "<div style='left: 180px; top: -5px; position: relative; font-size: 0.7em; color: white'>" + gameObj.drkSide.darkWizard.atk + "</div>";
-});
+
+    
+}); // <--- GAMESTATUS ENDS HERE
+
+
 // CLICKABLE LOOPS
 
     var atkState = {
@@ -543,12 +648,10 @@ f_socket.on('gameStatus', function (tgameObj) {
  // <--- this allows gameObj from backend to read to frontend 
 
 
-// Henry for questions 
 
 /*
  
 
-    Ask henry why atkState.minOne/minTwo is not communicating properly with the gameObj stuff. Brings up [object, object] if we console.log(curMon)
 
     drawing card concept
         card deck array in back end [?]
@@ -623,9 +726,471 @@ f_socket.on('gameStatus', function (tgameObj) {
         ntdarkGrunt.style.display = "none";
     });
 
-    function deadminFunc(){
     
-        console.log("deadMinFunc is thinking?");
-        setInterval(function() { alert("Hello"); }, 1500);
+// Set player 1 & 2 for light or dark
 
-    };
+// Join1 onClick = ask server to send a rooms array
+
+// Need to tell the SERVER when a minion's health is 0, and have the server to emit back to the curroom to remove the minion from the curroom. 
+
+endTurnBtn.addEventListener("click", function(){
+    var pn = f_socket.id;
+
+    
+    f_socket.emit('updateTurn', {
+        turn: gameObj.turn,
+        roomname: curroom
+    });
+    
+    console.log("Current turn is ",gameObj.turn);
+    console.log("Update turn!");
+})
+
+// Animaton spreadsheets
+
+var animations = {
+
+
+    // Light Side Animations
+
+    "lightCommander": {
+        idle: "lightCommanderIdle 1.5s steps(10)",
+        heal: "lightCommanderHeal 1.5s steps(10)",
+        attack: "lightCommanderAtk 1.5s steps(10)",
+        hit: "lightCommanderHit 1.5s steps(10)",
+        death: "lightCommanderDeath 1.5s steps(10)"
+
+    },
+
+    "lightArcher": {
+        idle: "lightArcherIdle 1.5s steps(10)",
+        heal: "lightArcherHeal 1.5s steps(10)",
+        attack: "lightArcherAtk 1.5s steps(10)",
+        hit: "lightArcherHit 1.5s steps(10)",
+        death: "lightArcherDeath 1.5s steps(10)"
+
+    },
+
+    "lightSoldier": {
+        idle: "lightSoldierIdle 1.5s steps(10)",
+        heal: "lightSoldierHeal 1.5s steps(10)",
+        attack: "lightSoldierAtk 1.5s steps(10)",
+        hit: "lightSoldierHit 1.5s steps(10)",
+        death: "lightSoldierDeath 1.5s steps(10)"
+
+    },
+
+    "lightDog": {
+        idle: "lightDogIdle 1.5s steps(10)",
+        heal: "lightDogHeal 1.5s steps(10)",
+        attack: "lightDogAtk 1.5s steps(10)",
+        hit: "lightDogHit 1.5s steps(10)",
+        death: "lightDogDeath 1.5s steps(10)"
+
+    },
+
+    //Dark Side Animations
+
+    "darkCommander": {
+        idle: "darkCommanderIdle 1.5s steps(10)",
+        heal: "darkCommanderHeal 1.5s steps(10)",
+        attack: "darkCommanderAtk 1.5s steps(10)",
+        hit: "darkCommanderHit 1.5s steps(10)",
+        death: "darkCommanderDeath 1.5s steps(10)"
+    },
+    "darkWizard": {
+        idle: "darkWizardIdle 1.5s steps(10)",
+        heal: "darkWizardHeal 1.5s steps(10)",
+        attack: "darkWizardAtk 1.5s steps(10)",
+        hit: "darkWizardHit 1.5s steps(10)",
+        death: "darkWizardDeath 1.5s steps(10)"
+    },
+    "darkGrunt": {
+        idle: "darkGruntIdle 1.5s steps(10)",
+        heal: "darkGruntHeal 1.5s steps(10)",
+        attack: "darkGruntAtk 1.5s steps(10)",
+        hit: "darkGruntHit 1.5s steps(10)",
+        death: "darkGruntDeath 1.5s steps(10)"
+    },
+
+    "darkDog": {
+        idle: "darkDogIdle 1.5s steps(10)",
+        heal: "darkDogHeal 1.5s steps(10)",
+        attack: "darkDogAtk 1.5s steps(10)",
+        hit: "darkDogHit 1.5s steps(10)",
+        death: "darkDogDeath 1.5s steps(10)"
+    }
+
+};
+
+
+// var archClicks = 0;
+// var lDogClicks = 0;
+// var lSolClicks = 0;
+// var lCommClicks = 0;
+
+// var wizClicks = 0;
+// var gruntClicks = 0;
+// var dDogClicks = 0;
+// var dCommClicks = 0;
+
+// var charClicks = 0;
+
+
+// lightArcher.addEventListener("click", function () {
+
+//     archClicks++;
+
+//     console.log("arch" + archClicks);
+
+//     if (archClicks == 1) {
+//         lightArcher.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntlightArcher.style.display = "block";
+//         lightCommander.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (archClicks == 2) {
+//         lightArcher.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         archClicks = 0;
+
+//     }
+// });
+
+
+// lightCommander.addEventListener("click", function () {
+
+//     lCommClicks++;
+
+//     console.log("lComm" + lCommClicks);
+
+//     if (lCommClicks == 1) {
+//         lightCommander.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntlightCommander.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (lCommClicks == 2) {
+//         lightCommander.style.filter = "none";
+//         ntlightCommander.style.display = "none";
+//         lCommClicks = 0;
+//     }
+// });
+
+// lightSoldier.addEventListener("click", function () {
+
+//     lSolClicks++;
+
+//     console.log("lComm" + lSolClicks);
+
+//     if (lSolClicks == 1) {
+//         lightSoldier.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntlightSoldier.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (lSolClicks == 2) {
+//         lightSoldier.style.filter = "none";
+//         ntlightSoldier.style.display = "none";
+//         lSolClicks = 0;
+//     }
+// });
+
+
+// lightDog.addEventListener("click", function () {
+
+//     lDogClicks++;
+
+//     console.log("lComm" + lDogClicks);
+
+//     if (lDogClicks == 1) {
+//         lightDog.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntlightDog.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         darkDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+
+//         ntdarkDog.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (lDogClicks == 2) {
+//         lightDog.style.filter = "none";
+//         ntlightDog.style.display = "none";
+//         lDogClicks = 0;
+//     }
+// });
+
+
+
+// darkDog.addEventListener("click", function () {
+
+//     dDogClicks++;
+
+//     console.log("dDogg" + dDogClicks);
+
+//     if (dDogClicks == 1) {
+//         darkDog.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntdarkDog.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (dDogClicks == 2) {
+//         darkDog.style.filter = "none";
+//         ntdarkDog.style.display = "none";
+//         dDogClicks = 0;
+//     }
+// });
+
+
+
+// darkGrunt.addEventListener("click", function () {
+
+//     gruntClicks++;
+
+//     console.log("dDogg" + dDogClicks);
+
+//     if (gruntClicks == 1) {
+//         darkGrunt.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntdarkGrunt.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkDog.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (gruntClicks == 2) {
+//         darkGrunt.style.filter = "none";
+//         ntdarkGrunt.style.display = "none";
+//         gruntClicks = 0;
+//     }
+// });
+
+
+
+// darkWizard.addEventListener("click", function () {
+
+//     wizClicks++;
+
+//     console.log("dDogg" + dDogClicks);
+
+//     if (wizClicks == 1) {
+//         darkWizard.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntdarkWizard.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkDog.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (wizClicks == 2) {
+//         darkWizard.style.filter = "none";
+//         ntdarkWizard.style.display = "none";
+//         wizClicks = 0;
+//     }
+// });
+
+// darkCommander.addEventListener("click", function () {
+
+//     dCommClicks++;
+
+//     console.log("dDogg" + dDogClicks);
+
+//     if (dCommClicks == 1) {
+//         darkCommander.style.filter = "drop-shadow(0px 0px 10px #ffffff)";
+//         ntdarkCommander.style.display = "block";
+//         lightArcher.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkDog.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         charClicks++;
+//         charClicks = 0;
+//     }
+
+//     if (dCommClicks == 2) {
+//         darkCommander.style.filter = "none";
+//         ntdarkCommander.style.display = "none";
+//         dCommClicks = 0;
+//     }
+// });
+
+
+// container2.addEventListener("click", function () {
+//     charClicks++;
+//     console.log("char" + charClicks);
+//     if (charClicks == 2) {
+//         lightArcher.style.filter = "none";
+//         lightCommander.style.filter = "none";
+//         lightSoldier.style.filter = "none";
+//         lightDog.style.filter = "none";
+//         darkDog.style.filter = "none";
+//         darkGrunt.style.filter = "none";
+//         darkWizard.style.filter = "none";
+//         darkCommander.style.filter = "none";
+//         charClicks = 0;
+//         archClicks = 0;
+//         lCommClicks = 0;
+//         lSolClicks = 0;
+//         lDogClicks = 0;
+//         dDogClicks = 0;
+//         gruntClicks = 0;
+//         wizClicks = 0;
+//         dCommClicks = 0;
+//         ntlightArcher.style.display = "none";
+//         ntlightCommander.style.display = "none";
+//         ntlightSoldier.style.display = "none";
+//         ntlightDog.style.display = "none";
+//         ntdarkDog.style.display = "none";
+//         ntdarkGrunt.style.display = "none";
+//         ntdarkWizard.style.display = "none";
+//         ntdarkCommander.style.display = "none";
+//     }
+// });
+
+
+// Menu Stuff
+
+var back7 = document.getElementById("back7");
+var exitGame = document.getElementById("exitGame");
+var menuBtn = document.getElementById("menuBtn");
+var menuContainer = document.getElementById("menuContainer");
+
+menuBtn.addEventListener("click", function () {
+    menuBtn.style.display = "none";
+    menuContainer.style.display = "block";
+});
+
+back7.addEventListener("click", function () {
+    menuContainer.style.display = "none";
+    menuBtn.style.display = "block";
+});
+
+
+
+var darkBox = document.getElementById("darkBox");
+var lightBox = document.getElementById("lightBox");
+
+darkBox.addEventListener("click", function () {
+    darkBox.style.filter = "drop-shadow(0px 0px 30px #000000)";
+    lightBox.style.filter = "none";
+});
+
+lightBox.addEventListener("click", function () {
+    lightBox.style.filter = "drop-shadow(0px 0px 30px #ffffff)";
+    darkBox.style.filter = "none";
+});
+
+startBtn.addEventListener("click", function () {
+    document.querySelector('#scrollHere').scrollIntoView({ behavior: 'smooth' });
+
+});
+
+back1.addEventListener("click", function () {
+    document.querySelector('#startBtn').scrollIntoView({ behavior: 'smooth' });
+});

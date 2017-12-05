@@ -17,7 +17,7 @@ server.listen(port, function () {
     console.log("The server is running.");
 });
 
-var rooms = [];
+var rooms = {};
 
 
 
@@ -74,7 +74,16 @@ var gameObj = {
             minType: "dark"
         }
     },
-};
+
+    p1: null,
+    p2: null,
+    p1state: 1,
+    p2state: 0,
+    turn: 1
+
+}; // GAMEOBJ ENDS
+
+
 
 // COPYPASTA CARD OBJECT
 var cardObj = {
@@ -112,21 +121,23 @@ var cardObj = {
 
 
 io.on('connection', function(socket){
+
+    //--ALL GAME FUNCTIONS MUST COME AFTER THIS EMIT--//
     
-
-
-
-
     //Rooms
     socket.on('new_room', function(data){
 
         var room = data;
         // pushes the room to the server side array so everyone sees the same thing when they open the page
-        rooms.push(room);
+        rooms[data.room]={
+            gameObj: JSON.parse(JSON.stringify(gameObj)),
+            room: data.room
+        };
         // user joins the room upon creating it
         socket.join(data.room);
         // using the console to ensure that the join was successful.  appears in console bc it's server side.
         console.log("Joined room " + data.room)
+
         console.log("Data is ", data)
         // emits the rooms array back to the other sockets
         
@@ -139,7 +150,66 @@ io.on('connection', function(socket){
 
         io.sockets.emit('new_room', rooms);
 
+    });
+
+
+    //--ALL GAME FUNCTIONS MUST COME AFTER THIS EMIT--//
+
+    socket.on("getrooms", function () {
+        socket.emit("joinrooms", rooms)
+    });
+
+    // needs to update just to room
+    socket.on("lightsideUpdateDeath", function (data) {
+        socket.emit("") // Send back that its dead
     })
+
+    //sets player 1
+    socket.on('updateP1', function (data) {
+        console.log("update p1");
+        console.log(data);
+        console.log("Line 171", rooms[data.roomname].gameObj.p1);
+        console.log(rooms[data.roomname].gameObj.p1 = data.pn);
+        rooms[data.roomname].gameObj.p1 = data.pn;
+
+        // console.log("p1 is now " + rooms[data.roomname].gameObj.p1);
+        
+        // why does this make the code crash? says gameObj of rooms[data.roomname].gameObj.p1 is undefined
+
+    });
+
+    // sets player 2
+    socket.on('updateP2', function (data) {
+        console.log("update p2");
+        console.log("P2:", rooms[data.roomname].gameObj.p2 = data.pn);
+        rooms[data.roomname].gameObj.p2 = data.pn;
+
+
+        console.log("p2 is now " + rooms[data.roomname].gameObj.p2);
+        console.log(rooms[data.roomname].gameObj);
+
+    });
+
+    socket.on('updateTurn', function(data){
+
+        var room = data.roomname;
+        
+        
+        if (data.turn == 1){
+            // gameObj.turn = 2;
+            rooms[data.roomname].gameObj.turn++
+            io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
+            
+        } else if (data.turn == 2){
+            // gameObj.turn = 1
+            rooms[data.roomname].gameObj.turn--;
+            io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
+        }
+        
+        console.log("Data from the game is ",data.turn);
+        console.log("GameOb.turn is = ", rooms[data.roomname].gameObj.turn);
+    });
+
 
 
     // this function allows a user to join their selected room with data sent by ndiv's event listener
@@ -152,15 +222,19 @@ io.on('connection', function(socket){
     
 
     io.sockets.emit('gameStatus', gameObj, rooms);
+
+    socket.on('updateAtk', function(data){
+        // Not sure what to send from client here
+    })
+
     // when someone sends an event, update status
-    
     socket.on('updateStatus', function(data){
         console.log(data);
-        console.log("Min one is ", data.minOne)
-        console.log("Min Two is ", data.minTwo)
+        console.log("Min one is ", data.backendUpdateObj.minOne)
+        console.log("Min Two is ", data.backendUpdateObj.minTwo)
         
-        var attacker = data.minOne.atk;
-        var victim = data.minTwo.health;
+        var attacker = data.backendUpdateObj.minOne.atk; // <--- error 
+        var victim = data.backendUpdateObj.minTwo.health;
         // calculation of result
         var result = victim - attacker;
         // calculate number and set to result
@@ -169,87 +243,68 @@ io.on('connection', function(socket){
 
 
 
-        if (data.minTwo.minType == "dark"){
+        if (data.backendUpdateObj.minTwo.minType == "dark"){
             console.log("The minion being attacked is dark");
 
-            console.log(data.monIdTwo);
+            console.log(data.backendUpdateObj.monIdTwo);
 
-            gameObj.drkSide[data.monIdTwo].health = result;
+            rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monIdTwo].health = result;
         } 
 
-        if (data.minTwo.minType == "light"){
+        if (data.backendUpdateObj.minTwo.minType == "light"){
             console.log("The minion being attacked is light");
-
-            gameObj.lghtSide[data.monIdTwo].health = result;
+            rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monIdTwo].health = result;
         } 
 
 
-        console.log(result);
-        // Once health is below 0
-        /*if (result <= 0) {
-            console.log([data.minTwo.name], " has died");
-            // Remove minion somehow 
+        console.log("result",result, data);
 
-            minDied = delete data.minTwo.this;
-            console.log("The minioned died T/F", minDied);
-            
-            if (minDied == true) {
-                // Do thing to destory minion
-                console.log("Need to add function to destory minion");
- 
+        var room = data.roomname
+// Sends info to the room only
+        io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
 
-            }
-        }*/
-
-        io.sockets.emit('gameStatus', gameObj);
-
-        // atkState = {
-        //     clickState: 0,
-        //     minOne: null,
-        //     minTwo: null
-        // }
-        
     });
     
     socket.on('updateDarkMin', function(data){
         
-        // LINE 134 CHANGES THE ATK VALUE OF DARK BOIS
-        var result = gameObj.drkSide[data.monster].atk + cardObj.drkSide[data.card].atk // DARK SIDE ATK
+        var room = data.roomname;
+        
+        console.log("The data sent over is ",data);
 
+        // LINE 134 CHANGES THE ATK VALUE OF DARK BOIS
+        var result = rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monster].atk + cardObj.drkSide[data.backendUpdateObj.card].atk // DARK SIDE ATK
+// ^^ with rooms, after min dies backend is looking for this
         // .card and .monster are from updateObj
         
         console.log(result + " DARK SIDE CHANGED");
 
-        gameObj.drkSide[data.monster].atk = result;
-        var result = gameObj.drkSide[data.monster].health + cardObj.drkSide[data.card].health// DARK SIDE ATK
-
-
+        rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monster].atk = result;
+        var result = rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monster].health + cardObj.drkSide[data.backendUpdateObj.card].health// DARK SIDE ATK
 
         console.log(result + " DARK SIDE CHANGEd");
-        gameObj.drkSide[data.monster].health = result;
+        rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monster].health = result;
         // DARK SIDE HEALTH
 
 
-        io.sockets.emit('gameStatus', gameObj);
+        io.sockets.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
         
     });
     
     socket.on('updateLightMin', function (data) {
 
-        var result = gameObj.lghtSide[data.monster].atk + cardObj.lghtSide[data.card].atk
+        var room = data.roomname;
+
+        var result = rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monster].atk + cardObj.lghtSide[data.backendUpdateObj.card].atk
         // LIGHT SIDE ATTACK 
 
         console.log(result + " LIGHTSIDE CHANGED");
+        console.log("Lightside attack: ", rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monster].atk)
 
 
-        gameObj.lghtSide[data.monster].atk = result;
-        gameObj.lghtSide[data.monster].health = result;
-        io.sockets.emit('gameStatus', gameObj);
+        rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monster].atk = result;
+        rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monster].health = result;
 
-    });
-
-    socket.on('updateAttack', function (data) {
-
+        io.sockets.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
 
 
     });
