@@ -19,7 +19,7 @@ server.listen(port, function () {
 
 var rooms = {};
 
-
+console.log(rooms);
 
 var gameObj = {
     lghtSide: {
@@ -27,25 +27,29 @@ var gameObj = {
             name: "Light Commander",
             health: 32,
             atk: 18,
-            minType: "light"
+            minType: "light",
+            isAlive: true
         },
         "lightDog": {
             name: "Light Dog",
             health: 15,
             atk: 10,
-            minType: "light"
+            minType: "light",
+            isAlive: true
         },
         "lightSoldier": {
             name: "Light Soldier",
             health: 17,
             atk: 8,
-            minType: "light"
+            minType: "light",
+            isAlive: true
         },
         "lightArcher": {
             name: "Light Archer",
             health: 15,
             atk: 10,
-            minType: "light"
+            minType: "light",
+            isAlive: true
         }
     },
     drkSide:{
@@ -53,25 +57,29 @@ var gameObj = {
             name: "Dark Commander",
             health: 26,
             atk: 24,
-            minType: "dark"
+            minType: "dark",
+            isAlive: true
         },
         "darkDog":{
             name:"Dark Dog",
             health:18,
             atk:7,
-            minType: "dark"
+            minType: "dark",
+            isAlive: true
         },
         "darkGrunt":{
             name: "Dark Grunt",
             health: 20,
             atk: 5,
-            minType: "dark"
+            minType: "dark",
+            isAlive: true
         },
         "darkWizard":{
             name: "Dark Wizard",
             health: 15,
             atk: 10,
-            minType: "dark"
+            minType: "dark",
+            isAlive: true
         }
     },
 
@@ -257,11 +265,26 @@ io.on('connection', function(socket){
         } 
 
 
+        console.log("Line 268", result);
+ 
+
         console.log("result",result, data);
 
         var room = data.roomname
 // Sends info to the room only
         io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
+        
+        if (data.backendUpdateObj.minTwo.minType == "dark") {
+            if (rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monIdTwo].health <= 0) {
+                rooms[data.roomname].gameObj.drkSide[data.backendUpdateObj.monIdTwo].isAlive = false
+            }
+        }
+
+        if (data.backendUpdateObj.minTwo.minType == "light") {
+            if (rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monIdTwo].health <= 0) {
+                rooms[data.roomname].gameObj.lghtSide[data.backendUpdateObj.monIdTwo].isAlive = false
+            }
+        } 
 
     });
     

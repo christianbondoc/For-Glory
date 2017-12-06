@@ -1,5 +1,5 @@
+console.log("You are in file ~/desktop/FG-FR-BK");
 //Websocket variable
-
 var f_socket = io.connect('localhost:4000');
 var gameObj = null;
 var start = false;
@@ -94,7 +94,8 @@ var curroom = "";
 
 
                 ndiv.innerHTML = data[i].room;
-
+                console.log(data[i].room);
+                
                 roomDiv.appendChild(ndiv);
                 // gives the room a div id which matches the name of the room
 
@@ -133,7 +134,7 @@ var curroom = "";
                     }
                 });
             }
-
+            
 
         })
 
@@ -421,7 +422,10 @@ $(".bgScroll").mousemove(function(e){
 // Calling gameObj via sockets
 
 
+// Minion dying/removed/died/dead
 
+var removeMinCountLight = 0;
+var removeMinCountDark = 0;
 // GAMEOBJ TO COMMUNICATE WITH BACK END 
 f_socket.on('gameStatus', function (tgameObj) {
     console.log(tgameObj);
@@ -501,23 +505,33 @@ f_socket.on('gameStatus', function (tgameObj) {
     gameObj = tgameObj;
 
 
+    var moni = null;
+    var moni2 = null;
 
-// Minion dying/removed/died/dead
 
-    var removeMinCountLight = 0;
-    var removeMinCountDark = 0;
 
     for (var i in gameObj.lghtSide) {
         if (gameObj.lghtSide[i].health <= 0) {
             $("#"+i).remove();
             removeMinCountLight++;
-
+            console.log("Light Minions who have died: " + removeMinCountLight);
 
         f_socket.emit('lightsideUpdateDeath', {
             monster: gameObj.lghtSide[i],
             roomname: curroom
             
         }) 
+
+            moni = [i];
+            document.getElementById(i).style.animation = animations[i].death;
+            console.log(moni);
+
+            setTimeout(function () {
+                $("#" + moni).remove();
+                console.log("monster is removed" + moni);
+                moni = null;
+                moni2 = null;
+            }, 1000);
 
 
             console.log(removeMinCountLight);
@@ -542,37 +556,32 @@ f_socket.on('gameStatus', function (tgameObj) {
         }
     }
 
-    var moni = null;
-    var moni2 = null;
 
     for (var i in gameObj.drkSide) {
-        console.log(i);
-        // Outputs all the objects in the darkside
-        
-        if (gameObj.drkSide[i].health <= 0) {
+        console.log(gameObj.drkSide[i]);
+        if (gameObj.drkSide[i].health <= 0 && gameObj.drkSide[i].isAlive == true) {
 
-            // moni = gameObj.drkSide[i];
+            removeMinCountDark++;
+            console.log("Dark Minions who have died: " + removeMinCountDark);
 
-            moni = i;
-            console.log(moni, moni2);
+            f_socket.emit('lightsideUpdateDeath', {
+                monster: gameObj.drkSide[i],
+                roomname: curroom
+
+            }) 
+
+            moni = [i];
             document.getElementById(i).style.animation = animations[i].death;
-
             console.log(moni);
 
             setTimeout(function () {
                 $("#" + moni).remove();
-
+                console.log("monster is removed" + moni);
                 moni = null;
                 moni2 = null;
-
-                console.log(moni, moni2);
-            }, 1500);
-
-
-// ^^ if inside If statement/timeout, moni = null and moni2 = null, but outside of if statement, moni = id but does not disappear. //If it is inside, somethingsometihng does not attack properly. 
-
-            removeMinCountDark++;
-            console.log("Remove minion count: " + removeMinCountDark);
+            }, 1000);
+            
+            console.log(removeMinCountDark);
             if (removeMinCountDark == 4) {
                 removeMinCountDark = 0;
 
@@ -1154,7 +1163,7 @@ var animations = {
 // });
 
 
-// Menu Stuff
+// // New Start Menu Stuff
 
 var back7 = document.getElementById("back7");
 var exitGame = document.getElementById("exitGame");
