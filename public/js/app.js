@@ -433,6 +433,10 @@ f_socket.on('gameStatus', function (tgameObj) {
         start = true;
         monStats = document.getElementsByClassName("allMins");
 
+// Variable for monsters attacking animation
+        var atki = null;
+        var atki2 = null;
+        
         // Click Monster Loop
         for (var i = 0; i < monStats.length; i++) {
             monStats[i].addEventListener("click", function () {
@@ -461,7 +465,9 @@ f_socket.on('gameStatus', function (tgameObj) {
 
                     atkState.monIdOne = [this.id];
                     console.log(atkState.monIdOne);
-                    console.log("Monster being selected for first click is: ",atkState.monIdOne);
+                    
+                    var atkID = [this.id]
+
                 }
 
 
@@ -474,12 +480,30 @@ f_socket.on('gameStatus', function (tgameObj) {
                     atkState.minTwo = curMon;
                     console.log("Click State is on state: "
                         + atkState.clickState);
-                    console.log(atkState.minTwo);
-                    console.log("Curmon: " + curMon);
+
 
                     atkState.monIdTwo = [this.id];
                     console.log(atkState.monIdTwo);
 
+    // Attack Animation
+                    
+                    atki = tgameObj.drkSide[i];
+                    console.log(atki);
+                    
+                    
+                    document.getElementById(atkState.monIdOne).style.animation = animations[atkState.monIdOne].attack;
+
+                    console.log("Attacking Animation is on: ", document.getElementById(atkState.monIdOne));
+                        
+                        setTimeout(function () {
+                            document.getElementById(atkState.monIdOne).style.animation = animations[atkState.monIdOne].idle;
+                                atki = null
+                            }, 1000);
+                        // Why only wizard animation if > i <
+                    
+                    console.log("Monster being selected for first click is: ", atkState.monIdOne);
+                    
+                    
                     //Send atkState to backend
                     f_socket.emit('updateStatus', {
                         backendUpdateObj: atkState,
@@ -511,8 +535,8 @@ f_socket.on('gameStatus', function (tgameObj) {
 
 
     for (var i in gameObj.lghtSide) {
-        if (gameObj.lghtSide[i].health <= 0) {
-            $("#"+i).remove();
+        if (gameObj.lghtSide[i].health <= 0 && gameObj.lghtSide[i].isAlive == true) {
+
             removeMinCountLight++;
             console.log("Light Minions who have died: " + removeMinCountLight);
 
@@ -576,7 +600,7 @@ f_socket.on('gameStatus', function (tgameObj) {
 
             setTimeout(function () {
                 $("#" + moni).remove();
-                console.log("monster is removed" + moni);
+                console.log("monster is removed " + moni);
                 moni = null;
                 moni2 = null;
             }, 1000);
@@ -759,74 +783,64 @@ endTurnBtn.addEventListener("click", function(){
 
 var animations = {
 
-
     // Light Side Animations
-
     "lightCommander": {
-        idle: "lightCommanderIdle 1.5s steps(10)",
-        heal: "lightCommanderHeal 1.5s steps(10)",
-        attack: "lightCommanderAtk 1.5s steps(10)",
-        hit: "lightCommanderHit 1.5s steps(10)",
-        death: "lightCommanderDeath 1.5s steps(10)"
+        idle: "lightCommanderIdle 2s steps(8) infinite",
+        attack: "lightCommanderAttack 1s steps(8) forwards",
+        damaged: "lightCommanderDamaged 0.5s steps(8) forwards",
+        death: "lightCommanderDeath 0.5s steps(8) forwards"
 
     },
 
     "lightArcher": {
-        idle: "lightArcherIdle 1.5s steps(10)",
-        heal: "lightArcherHeal 1.5s steps(10)",
-        attack: "lightArcherAtk 1.5s steps(10)",
-        hit: "lightArcherHit 1.5s steps(10)",
-        death: "lightArcherDeath 1.5s steps(10)"
+        idle: "lightArcherIdle 2s steps(8) infinite",
+        attack: "lightArcherAttack 1s steps(8) forwards",
+        damaged: "lightArcherDamaged 0.5s steps(9) forwards",
+        death: "lightArcherDeath 0.5s steps(8) forwards"
 
     },
 
     "lightSoldier": {
-        idle: "lightSoldierIdle 1.5s steps(10)",
-        heal: "lightSoldierHeal 1.5s steps(10)",
-        attack: "lightSoldierAtk 1.5s steps(10)",
-        hit: "lightSoldierHit 1.5s steps(10)",
-        death: "lightSoldierDeath 1.5s steps(10)"
+        idle: "lightSoldierIdle 2s steps(9) infinite",
+        attack: "lightSoldierAttack 0.8s steps(9) forwards",
+        damaged: "lightSoldierDamaged 0.5s steps(9) forwards",
+        death: "lightSoldierDeath 1s steps(9) forwards"   
 
     },
 
     "lightDog": {
-        idle: "lightDogIdle 1.5s steps(10)",
-        heal: "lightDogHeal 1.5s steps(10)",
-        attack: "lightDogAtk 1.5s steps(10)",
-        hit: "lightDogHit 1.5s steps(10)",
-        death: "lightDogDeath 1.5s steps(10)"
+        idle: "lightDogIdle 1s steps(8) infinite",
+        attack: "lightDogAttack .7s steps(8) forwards",
+        damaged: "lightDogDamaged 0.5s steps(8) forwards",
+        death: "lightDogDeath 0.9s steps(8) forwards"
 
     },
 
     //Dark Side Animations
 
     "darkCommander": {
-        idle: "darkCommanderIdle 1.5s steps(10)",
-        heal: "darkCommanderHeal 1.5s steps(10)",
-        attack: "darkCommanderAtk 1.5s steps(10)",
-        hit: "darkCommanderHit 1.5s steps(10)",
-        death: "darkCommanderDeath 1.5s steps(10)"
+        idle: "darkCommanderIdle 1s steps(11) infinite",
+        attack: "darkCommanderAttack 1.1s steps(11) forwards",
+        damaged: "darkCommanderDamaged 0.5s steps(11) forwards",
+        death: "darkCommanderDeath 1.1s steps(11) forwards"
     },
     "darkWizard": {
-        idle: "darkWizardIdle 1.5s steps(10)",
-        heal: "darkWizardHeal 1.5s steps(10)",
-        attack: "darkWizardAtk 1.5s steps(10)",
-        hit: "darkWizardHit 1.5s steps(10)",
+        idle: "darkWizardIdle 1.5s steps(10) infinite",
+        attack: "darkWizardAttack 1s steps(11)",
+        damaged: "darkWizardDamaged 0.5s steps(11) forwards",
         death: "darkWizardDeath 1.5s steps(10)"
     },
     "darkGrunt": {
         idle: "darkGruntIdle 1.5s steps(10)",
-        heal: "darkGruntHeal 1.5s steps(10)",
-        attack: "darkGruntAtk 1.5s steps(10)",
-        hit: "darkGruntHit 1.5s steps(10)",
-        death: "darkGruntDeath 1.5s steps(10)"
+        attack: "darkGruntAttack 1s steps(11) forwards",
+        damaged: "darkGruntDamaged 0.5s steps(11) forwards",
+        death: "darkGruntDeath 1.1s steps(11) forwards"
     },
 
     "darkDog": {
-        idle: "darkDogIdle 1.5s steps(10)",
-        heal: "darkDogHeal 1.5s steps(10)",
-        attack: "darkDogAtk 1.5s steps(10)",
-        hit: "darkDogHit 1.5s steps(10)",
+        idle: "darkDogIdle 1s steps(10) infinite",
+        attack: "darkDogAttack 0.8s steps(10) forwards",
+        damaged: "darkDogDamaged 0.5s steps(10) forwards",
         death: "darkDogDeath 1.5s steps(10)"
     }
 
