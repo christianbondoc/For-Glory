@@ -174,27 +174,28 @@ io.on('connection', function(socket){
 
     //sets player 1
     socket.on('updateP1', function (data) {
-        console.log("update p1");
-        console.log(data);
-        console.log("Line 171", rooms[data.roomname].gameObj.p1);
-        console.log(rooms[data.roomname].gameObj.p1 = data.pn);
+
+        room = data.roomname;
         rooms[data.roomname].gameObj.p1 = data.pn;
-
         // console.log("p1 is now " + rooms[data.roomname].gameObj.p1);
-        
         // why does this make the code crash? says gameObj of rooms[data.roomname].gameObj.p1 is undefined
-
+        io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
+        
     });
 
     // sets player 2
     socket.on('updateP2', function (data) {
         console.log("update p2");
         console.log("P2:", rooms[data.roomname].gameObj.p2 = data.pn);
+
+        room = data.roomname;
         rooms[data.roomname].gameObj.p2 = data.pn;
 
 
         console.log("p2 is now " + rooms[data.roomname].gameObj.p2);
         console.log(rooms[data.roomname].gameObj);
+
+        io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
 
     });
 
@@ -205,12 +206,12 @@ io.on('connection', function(socket){
         
         if (data.turn == 1){
             // gameObj.turn = 2;
-            rooms[data.roomname].gameObj.turn++
+            rooms[data.roomname].gameObj.turn = 2;
             io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
             
         } else if (data.turn == 2){
             // gameObj.turn = 1
-            rooms[data.roomname].gameObj.turn--;
+            rooms[data.roomname].gameObj.turn = 1;
             io.in(room).emit('gameStatus', rooms[data.roomname].gameObj);
         }
         

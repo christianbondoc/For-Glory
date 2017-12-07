@@ -9,6 +9,10 @@ var start = false;
 // Socket variable to connect to the server
 
 
+//-- LIMITING TURNS AND CARDS. INSERT ME!!! --//
+var limitCard = 0;
+var limitAttack = 0;
+
 // ROOMS STUFF
 var curroom = "";
 
@@ -121,23 +125,13 @@ var curroom = "";
 
                     console.log("The player's number is now " + pn);
 
-                    if (gameObj.p1 == null) {
-                        f_socket.emit('updateP1', {
-                            pn: pn,
-                            roomname: curroom
-                        });
-                    } else if (gameObj.p2 == null) {
-                        f_socket.emit('updateP2', {
-                            pn: pn,
-                            roomname: curroom
-                        })
-                    }
+                    f_socket.emit('updateP2', {
+                        pn: pn,
+                        roomname: curroom
+                    });
                 });
             }
-            
-
         })
-
     });
     
     
@@ -258,17 +252,11 @@ var lightCommander = document.getElementById("lightCommander"),
 
         console.log("The player's number is now " + pn);
 
-        if (gameObj.p1 == null) {
             f_socket.emit('updateP1', {
                 pn: pn,
                 roomname: curroom
             });
-        } else if (gameObj.p2 == null) {
-            f_socket.emit('updateP2', {
-                pn: pn,
-                roomname: curroom
-            })
-        }
+
 
     });
 
@@ -365,52 +353,79 @@ $(".bgScroll").mousemove(function(e){
 
     // When you drop card; change dark minion value
 
-    $(".dark-mins").droppable ({
+    $(".dark-mins").droppable({
         drop: function (event, ui) {
-            var dropid = $(this).attr("id");
-    
-            console.log(dropid);
-            updateObj.monster = dropid
-            // Turning object from backend into a variable
-            console.log(updateObj);
+            //-- INSERT ME --//
+            if (limitCard <= 1) {
+                var dropid = $(this).attr("id");
 
-            $(".attackUpSpSh").appendTo(this);
+                console.log(dropid);
+                updateObj.monster = dropid
+                // Turning object from backend into a variable
+                console.log(updateObj);
 
-            // Update server with drop function
+                //-- Updates the Number card drops --//
+                //-- INSERT ME --//
 
-            f_socket.emit('updateDarkMin', {
-                backendUpdateObj: updateObj,
-                roomname: curroom
-            });
+                limitCard++;
+                console.log(limitCard);
 
+                //-- INSERT UNTIL HERE --//
 
+                $(".attackUpSpSh").appendTo(this);
+
+                // Update server with drop function
+
+                f_socket.emit('updateDarkMin', {
+                    backendUpdateObj: updateObj,
+                    roomname: curroom
+                });
+
+                //-- INSERT HERE --//
+            } else {
+                alert("You already played a card.");
+            }
+
+            // -- INSERT UNTIL HERE -- //
         }
-        // Ask Henry why no choose other ID
     });
-    
     // When you drop card; change light minion value
 
     $(".light-mins").droppable({
         drop: function (event, ui) {
-            var dropid = $(this).attr("id");
+            //-- INSERT ME --//
+            if (limitCard <= 1) {
+                var dropid = $(this).attr("id");
 
-            console.log(dropid);
-            updateObj.monster = dropid;
+                console.log(dropid);
+                updateObj.monster = dropid;
 
-            console.log(updateObj);
+                console.log(updateObj);
 
-            // Update server with drop function
-            f_socket.emit('updateLightMin', {
-                backendUpdateObj: updateObj,
-                roomname: curroom
-            });
+                // Update server with drop function
+                f_socket.emit('updateLightMin', {
+                    backendUpdateObj: updateObj,
+                    roomname: curroom
+                });
 
-            // Feedback attempt
-            $(".attackUpSpSh").appendTo(this);
+                /-- Updates the Number card drops --/ /
+                    //-- INSERT ME --//
 
+                    limitCard++;
+                console.log(limitCard);
+
+                // Feedback attempt
+                $(".attackUpSpSh").appendTo(this);
+
+                //-- INSERT HERE --//
+            } else {
+                alert("You already played a card.");
             }
-    });
 
+            // -- INSERT UNTIL HERE -- //
+
+        }
+    });
     // Main menu toggle
 
     // Maybe make a lock div for this
@@ -441,6 +456,15 @@ f_socket.on('gameStatus', function (tgameObj) {
         for (var i = 0; i < monStats.length; i++) {
             monStats[i].addEventListener("click", function () {
 
+
+                    var pn = f_socket.id;
+                    
+                    console.log("The player's pn is ",pn);
+                    console.log("The game object number is ", gameObj.p1);
+
+                    //--INSERT ME--//                    
+            if ((pn == gameObj.p1 && gameObj.turn == 1) || (pn == gameObj.p2 && gameObj.turn == 2)){
+
                 var curMon = null;
                 console.log(atkState);
                 // Confirming if light side
@@ -467,58 +491,94 @@ f_socket.on('gameStatus', function (tgameObj) {
                     console.log(atkState.monIdOne);
                     
                     var atkID = [this.id]
-
+                    console.log([this.id]);
                 }
 
 
-                // Click state 2 is when minion is confirmed not same minion type vvvvvvv SECOND CLICK HERE vvvvvvv
+                    // Click state 2 is when minion is confirmed not same minion type vvvvvvv SECOND CLICK HERE vvvvvvv
 
-                else if (atkState.clickState == 1 && atkState.minOne.minType != curMon.minType) {
+                    else if (atkState.clickState == 1 && atkState.minOne.minType != curMon.minType) {
+                        // -- INSERT ME --//
+                        if (limitAttack <= 0) {
+                            // 2nd clickstate
+                            atkState.clickState = 2;
+                            atkState.minTwo = curMon;
+                            console.log("Click State is on state: "
+                                + atkState.clickState);
+                            console.log(atkState.minTwo);
+                            console.log("Curmon: " + curMon);
 
-                    // 2nd clickstate
-                    atkState.clickState = 2;
-                    atkState.minTwo = curMon;
-                    console.log("Click State is on state: "
-                        + atkState.clickState);
+                            atkState.monIdTwo = [this.id];
+                            console.log(atkState.monIdTwo);
+
+                            // Attack Animation
+
+                            atki = tgameObj.drkSide[i];
+                            console.log(atki);
 
 
-                    atkState.monIdTwo = [this.id];
-                    console.log(atkState.monIdTwo);
+                            document.getElementById(atkState.monIdOne).style.animation = animations[atkState.monIdOne].attack;
+                            document.getElementById(atkState.monIdTwo).style.animation = animations[atkState.monIdTwo].damaged;
 
-    // Attack Animation
-                    
-                    atki = tgameObj.drkSide[i];
-                    console.log(atki);
-                    
-                    
-                    document.getElementById(atkState.monIdOne).style.animation = animations[atkState.monIdOne].attack;
+                            var monAttacker = atkState.monIdOne;
+                            var monHurt = atkState.monIdTwo;
 
-                    console.log("Attacking Animation is on: ", document.getElementById(atkState.monIdOne));
-                        
-                        setTimeout(function () {
-                            document.getElementById(atkState.monIdOne).style.animation = animations[atkState.monIdOne].idle;
-                                atki = null
+                            var idleSet = animations[atkState.monIdOne].idle;
+                            var idleSetTwo = animations[atkState.monIdTwo].idle;
+                            var attackSet = animations[atkState.monIdTwo].damaged;
+
+                            console.log("test: " + attackSet);
+
+                            console.log("Attacking Animation is on: ", document.getElementById(atkState.monIdOne));
+                            console.log("Damaged Animation is on: ", document.getElementById(atkState.monIdTwo));
+
+                            setTimeout(function () {
+                                document.getElementById(monAttacker).style.animation = idleSet;
+
                             }, 1000);
-                        // Why only wizard animation if > i <
-                    
-                    console.log("Monster being selected for first click is: ", atkState.monIdOne);
-                    
-                    
-                    //Send atkState to backend
-                    f_socket.emit('updateStatus', {
-                        backendUpdateObj: atkState,
-                        roomname: curroom,
-                    });
 
-                }
-                // Error log
-                else {
-                    console.log("Invalid");
-                    alert("You can't attack your own team!");
+                            console.log("Light count: ", removeMinCountLight);
+                            console.log("Dark count: ", removeMinCountDark);
+                            setTimeout(function () {
+                                
+    // FIX THIS LATER                            // if (removeMinCountDark <= 3 || removeMinCountLight <= 3) {
+                                document.getElementById(monHurt).style.animation = idleSetTwo;
+                                // }
+                            }, 500);
+
+
+                            // Why only wizard animation if > i <
+
+
+
+                            console.log("Monster being selected for first click is: ", atkState.monIdOne);
+
+
+                            //Send atkState to backend
+                            f_socket.emit('updateStatus', {
+                                backendUpdateObj: atkState,
+                                roomname: curroom,
+                            });
+
+                            //-- INSERT ME ---//
+                            limitAttack++;
+                        }
+                        // END INSERT //
+
+                    }
+                    // Error log
+                    else {
+                        console.log("Invalid");
+                        alert("You can't attack your own team!");
+                    }
+                    //---INSERT ME---//
                 }
             })
         }
     }
+
+
+
     atkState = {
         clickState: 0,
         minOne: null,
@@ -563,7 +623,12 @@ f_socket.on('gameStatus', function (tgameObj) {
                     removeMinCountLight = 0;
 
 
-                    alert("The Wellman and his cutthroat crew has won!!");
+                    // DARK SIDE WIN CONDITION
+                    setTimeout(function () {
+                        alert("The Wellman and his cutthroat crew has won!!");
+                        
+                    }, 1000);
+
 
                 }
         }
@@ -606,10 +671,15 @@ f_socket.on('gameStatus', function (tgameObj) {
             }, 1000);
             
             console.log(removeMinCountDark);
+            // LIGHT SIDE WIN CONDITION 
             if (removeMinCountDark == 4) {
                 removeMinCountDark = 0;
 
-                alert("The Valkyire has risen against the competition!!");
+                setTimeout(function () {
+                    alert("The Valkyire has risen against the competition!!");
+
+                }, 1000);
+
             }
         }
     }
@@ -766,16 +836,23 @@ f_socket.on('gameStatus', function (tgameObj) {
 
 // Need to tell the SERVER when a minion's health is 0, and have the server to emit back to the curroom to remove the minion from the curroom. 
 
-endTurnBtn.addEventListener("click", function(){
+// Need to tell the SERVER when a minion's health is 0, and have the server to emit back to the curroom to remove the minion from the curroom. 
+
+endTurnBtn.addEventListener("click", function () {
     var pn = f_socket.id;
 
-    
+
     f_socket.emit('updateTurn', {
         turn: gameObj.turn,
         roomname: curroom
     });
-    
-    console.log("Current turn is ",gameObj.turn);
+
+    limitCard = 0;
+    limitAttack = 0;
+
+    console.log("Attack: " + limitCard);
+    console.log("Card: "+ limitAttack);
+    console.log("Current turn is ", gameObj.turn);
     console.log("Update turn!");
 })
 
